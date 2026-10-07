@@ -12,7 +12,7 @@ ha-floorplan/
 ├── .gitignore · .yamllint
 ├── scripts/
 │   ├── bootstrap.sh              # prepara un clon limpio (tarjetas JS, Browser Mod, plantillas)
-│   ├── render-layers.mjs         # genera los PNG del dashboard desde el modelo three.js
+│   ├── render-layers.mjs         # (opcional) genera PNG con capas de luz desde el modelo three.js
 │   └── backup.sh                 # copia del estado que NO está en Git (.storage, BD, secrets)
 ├── packages_available/
 │   └── demo.yaml                 # luces/personas de ejemplo (cópialo a config/packages/ para usarlo)
@@ -25,13 +25,13 @@ ha-floorplan/
     ├── automations.yaml · scripts.yaml · scenes.yaml   # reservados para la UI
     ├── themes/floorplan_dark.yaml
     ├── dashboards/floorplan.yaml # el dashboard 3D (layout-card + picture-elements)
-    ├── www/casa3d/               # modelo 3D three.js: house.json (plano) + app.js (visor)
-    └── www/floorplan/            # PNG del mapa (→ /local/floorplan/…), generados desde casa3d
+    ├── www/casa3d/               # modelo 3D: house.json (plano), house3d.js, casa3d-card.js (tarjeta HA), visor
+    └── www/floorplan/            # PNG opcionales generados desde casa3d (ya no los usa el dashboard)
 ```
 
 La CI (`.github/workflows/validate.yml`) ejecuta `yamllint` y `check_config` con la imagen oficial en cada push.
 
-Las imágenes de `www/floorplan/` se **generan desde el modelo three.js** (`www/casa3d/`), basado en el plano *Jordan Bluffs · Plan 4* (2 hab / 2 baños). Ver §6.
+El mapa es un **modelo three.js** (`www/casa3d/`) basado en el plano *Jordan Bluffs · Plan 4* (2 hab / 2 baños) y conectado en vivo a Home Assistant. Ver §6. Los PNG de `www/floorplan/` son opcionales.
 
 ---
 
@@ -98,7 +98,7 @@ En la tablet, abre Home Assistant → panel **Browser Mod** (barra lateral) → 
 
 ## 5. Adaptar las entidades de ejemplo
 
-Edita `config/dashboards/floorplan.yaml` (la cabecera lista todas). Los cambios en el dashboard **no requieren reinicio**: guarda y refresca el navegador. Los cambios en `configuration.yaml` y los packages requieren reinicio (o recarga desde *Herramientas para desarrolladores → YAML*).
+Edita `config/dashboards/floorplan.yaml` (y `"light"` en `config/www/casa3d/house.json` para las luces del mapa) (la cabecera lista todas). Los cambios en el dashboard **no requieren reinicio**: guarda y refresca el navegador. Los cambios en `configuration.yaml` y los packages requieren reinicio (o recarga desde *Herramientas para desarrolladores → YAML*).
 
 Antes de reiniciar, valida la configuración:
 
@@ -109,20 +109,39 @@ yamllint -c .yamllint .     # opcional, local
 
 ---
 
-## 6. Modelo 3D con three.js (recomendado)
+## 6. Modelo 3D con three.js conectado a Home Assistant
 
-El modelo se describe en `config/www/casa3d/house.json` (unidades: pies; origen = esquina noroeste del plano; x → este, y → sur): habitaciones, muros, ventanas y muebles. `app.js` lo convierte en una escena three.js con cámara isométrica (suroeste, como los renders de referencia) y una luz por habitación.
+El mapa del dashboard es la tarjeta **`custom:casa3d-card`** (`config/www/casa3d/casa3d-card.js`, cargada en `configuration.yaml`). Dibuja el modelo en vivo con three.js y lo sincroniza con las entidades: no hay PNG que regenerar al encender una luz.
 
-**Ver / orbitar el modelo** (tras `./scripts/bootstrap.sh`, que baja three.js a `www/vendor/three/`): `http://<host>:8123/local/casa3d/index.html` · opciones: `?on=sala,cocina` · `?ui=0` · `?cutaway=0`.
+| Archivo (`config/www/casa3d/`) | Qué es |
+|---|---|
+| `house.json` | El plano, en pies: muros por eje con sus aberturas, habitaciones, muebles. **Fuente de verdad.** |
+| `house3d.js` | Motor three.js (muros con huecos, puertas con hoja, luces, marcadores). Lo usan la tarjeta y el visor. |
+| `casa3d-card.js` | La tarjeta de Lovelace (lee `hass`, llama a servicios). |
+| `index.html` + `app.js` | Visor independiente sin Home Assistant: `/local/casa3d/index.html` (`?on=sala,cocina` · `?ui=0` · `?orbit=0` · `?cutaway=0` · `?view=top`). |
 
-**Regenerar los PNG del dashboard** (requiere `npm i -g playwright`; si no encuentra Chromium, `CHROMIUM_PATH=/ruta/chrome`):
+`./scripts/bootstrap.sh` descarga three.js a `www/vendor/three/` (la carpeta está en `.gitignore`); sin él la tarjeta muestra un aviso.
 
-```bash
-node scripts/render-layers.mjs
-```
-Escribe `casa_base.png` y `<habitación>_on.png` (1920×1200, misma cámara). Cada capa es la diferencia «luz encendida − base», recortada a su habitación, lista para `mix-blend-mode: screen` (varias luces a la vez). El script imprime el `top`/`left` en % para los iconos de `dashboards/floorplan.yaml`.
+### Qué hace la tarjeta
+- **Luces:** cada habitación con `"light": "light.xxx"` en `house.json` se ilumina cuando la entidad está `on`; respeta `brightness` y `rgb_color`. Un icono por habitación: toque = encender/apagar, mantener = más información. También se puede tocar directamente el suelo de la habitación.
+- **Puertas y ventanas con sensor:** `openings: { puerta_dorm2: binary_sensor.xxx }` abre/cierra la hoja de la puerta (`on` = abierta). Los ids están en `house.json` (`puerta_dorm2`, `puerta_wc`, `puerta_bano2`, `puerta_wh`, `puerta_fau`, `puerta_lav`, `puerta_wic`, `puerta_closet`, `puerta_closet_dorm2`).
+- **Timbre:** `doorbell: { overlay, camera }` superpone el vídeo en vivo mientras `input_boolean.timbre_overlay` está en `on`.
+- **Marcadores extra:** `markers: [{ entity, icon, at: [x, y] }]` (coordenadas en pies, como en `house.json`).
+- Opciones: `interactive` (orbitar/zoom), `cutaway` (muros delanteros bajos), `aspect_ratio`, `lights` (sobrescribe la entidad de una habitación). Ver la cabecera de `casa3d-card.js`.
 
-**Editar la casa:** cambia medidas, muros o muebles en `house.json` y vuelve a renderizar. Cada habitación con `"light": "light.xxx"` genera su capa; el id de la habitación da el nombre del PNG. Las medidas son una transcripción del plano (~21.6 px/ft): refínalas con las reales.
+Tras cambiar JS o `house.json` fuerza la recarga del navegador (Ctrl+Shift+R): `/local/` se cachea.
+
+### Editar la casa
+Todo está en `house.json` (origen = eje del muro noroeste; x → este, y → sur):
+- **Muros:** `{ id, a: [x,y], b: [x,y], ext?, t?, near?, openings: [...] }`. `near` rebaja el muro que da a la cámara.
+- **Aberturas** (`at` = pies medidos desde `a`): `window` (`sill`, `head`), `opening` (paso sin hoja) y `door` (`id`, `hinge: a|b`, `swing: n|s|e|w` = lado hacia el que abre, `angle` abierta).
+- **Habitaciones:** `rects` (unión de rectángulos), `light`, `icon: [x,y]`.
+- Para comparar con el plano abre `?view=top&cutaway=0` junto al plano original.
+
+La transcripción sale del plano *Jordan Bluffs · Plan 4* (2 hab / 2 baños, 1.122 sq ft) a ~48 px/ft; las medidas de los cuartos coinciden con las rotuladas (dormitorio 2: 11'-0" × 9'-10"). Refínalas con las reales.
+
+### PNG opcionales
+`node scripts/render-layers.mjs` (requiere `npm i -g playwright`; si no encuentra Chromium: `CHROMIUM_PATH=/ruta/chrome`) genera desde el mismo modelo `casa_base.png` y `<habitación>_on.png` (1920×1200) en `www/floorplan/`, con capas recortadas por habitación y listas para `mix-blend-mode: screen`. Ya no los usa el dashboard; sirven para otros paneles o como imagen de reserva.
 
 ---
 

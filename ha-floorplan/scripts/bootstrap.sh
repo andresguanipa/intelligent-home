@@ -56,6 +56,8 @@ tar -xzf "$TMP3/three.tgz" -C "$TMP3" package/build/three.module.js package/exam
 mkdir -p "$VENDOR/three/addons/controls"
 cp "$TMP3/package/build/three.module.js" "$VENDOR/three/three.module.js"
 cp "$TMP3/package/examples/jsm/controls/OrbitControls.js" "$VENDOR/three/addons/controls/OrbitControls.js"
+# HA no tiene import maps: el import desnudo "three" pasa a ruta relativa
+sed -i "s#from 'three'#from '../../three.module.js'#; s#from \"three\"#from '../../three.module.js'#" "$VENDOR/three/addons/controls/OrbitControls.js"
 rm -rf "$TMP3"
 
 echo "→ Browser Mod → config/custom_components/browser_mod"
