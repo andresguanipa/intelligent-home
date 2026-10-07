@@ -169,6 +169,10 @@ views:
           - type: tile
             entity: vacuum.robotina
             name: Robotina
+            # Al tocar la tarjeta se abre el mapa del robot (ventana emergente).
+            tap_action:
+              action: more-info
+              entity: camera.robotina_map
             card_mod: *cristal
             features:
               - type: vacuum-commands
@@ -188,18 +192,3 @@ views:
                 name: Última limpieza
                 icon: mdi:vector-square
                 card_mod: *cristal
-          - type: picture-entity
-            entity: camera.robotina_map
-            show_name: false
-            show_state: false
-            camera_view: auto
-            tap_action:
-              action: more-info
-            card_mod:
-              style: |
-                ha-card {
-                  border-radius: 24px;
-                  overflow: hidden;
-                  border: 1px solid rgba(255, 255, 255, 0.08);
-                  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
-                }
