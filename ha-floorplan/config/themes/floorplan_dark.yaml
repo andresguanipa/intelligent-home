@@ -1,0 +1,23 @@
+# Tema oscuro para el floorplan 3D. Selecciónalo en tu perfil de usuario
+# o ya queda aplicado a la vista vía "theme: floorplan_dark" en el dashboard.
+floorplan_dark:
+  # Fondo general: degradado azul-noche que hace "flotar" el mapa 3D
+  lovelace-background: "radial-gradient(ellipse at 50% 40%, #1b2030 0%, #0b0d14 70%)"
+  primary-background-color: "#0b0d14"
+  secondary-background-color: "#141824"
+  card-background-color: "rgba(20, 24, 36, 0.55)"
+  ha-card-background: "rgba(20, 24, 36, 0.55)"
+  ha-card-border-radius: "24px"
+  ha-card-border-width: "1px"
+  ha-card-border-color: "rgba(255, 255, 255, 0.08)"
+  ha-card-box-shadow: "0 10px 30px rgba(0, 0, 0, 0.35)"
+  primary-color: "#ffc45c"
+  accent-color: "#ffc45c"
+  primary-text-color: "#eef1f8"
+  secondary-text-color: "#9aa3b8"
+  state-icon-color: "#9aa3b8"
+  state-light-active-color: "#ffc45c"
+  divider-color: "rgba(255, 255, 255, 0.06)"
+  # Popup de Browser Mod con el mismo estilo cristal
+  ha-dialog-surface-background: "rgba(16, 19, 28, 0.92)"
+  mdc-dialog-scrim-color: "rgba(0, 0, 0, 0.6)"

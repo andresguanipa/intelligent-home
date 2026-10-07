@@ -1,0 +1,13 @@
+# Secretos y estado de Home Assistant (no versionar)
+config/secrets.yaml
+config/.storage/
+config/.cloud/
+config/home-assistant_v2.db*
+config/home-assistant.log*
+config/.HA_VERSION
+config/tts/
+config/deps/
+config/__pycache__/
+# Código descargado por HACS (se reinstala desde HACS)
+config/custom_components/
+config/www/community/

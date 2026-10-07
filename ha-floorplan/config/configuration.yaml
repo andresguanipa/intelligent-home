@@ -1,0 +1,99 @@
+# =============================================================================
+#  configuration.yaml · Home Assistant (Config as Code)
+# =============================================================================
+
+# Carga el conjunto estándar de integraciones (frontend, history, energy,
+# mobile_app, person, zone, etc.). No lo quites salvo que sepas qué haces.
+default_config:
+
+homeassistant:
+  # Zona horaria del núcleo (coincide con TZ del docker-compose).
+  # Al declararla aquí, el campo queda bloqueado en la UI → fuente única: Git.
+  time_zone: America/Denver
+  # Permite organizar configuración por "paquetes" en config/packages/
+  # (útil cuando el proyecto crezca: un archivo por habitación o sistema).
+  packages: !include_dir_named packages
+
+# -----------------------------------------------------------------------------
+#  Frontend y temas
+# -----------------------------------------------------------------------------
+frontend:
+  # Carga todos los temas de config/themes/ (ver floorplan_dark.yaml).
+  themes: !include_dir_merge_named themes
+  # RECOMENDADO tras instalar card-mod desde HACS: cargarlo como módulo
+  # global hace que los estilos se apliquen antes y sin parpadeo.
+  # Descomenta DESPUÉS de instalar card-mod (si no, el frontend dará error 404):
+  # extra_module_url:
+  #   - /hacsfiles/lovelace-card-mod/card-mod.js
+
+# -----------------------------------------------------------------------------
+#  Dashboards en modo YAML
+# -----------------------------------------------------------------------------
+#  El dashboard principal ("Resumen") sigue en modo almacenamiento (UI), de
+#  modo que HACS pueda registrar automáticamente los recursos JS de las
+#  tarjetas personalizadas. El floorplan se define 100 % en YAML:
+#  cualquier cambio en dashboards/floorplan.yaml se ve con solo recargar
+#  el navegador (no hace falta reiniciar Home Assistant).
+lovelace:
+  dashboards:
+    # La clave es la URL: http://<host>:8123/casa-3d  (debe contener un guion)
+    casa-3d:
+      mode: yaml
+      filename: dashboards/floorplan.yaml
+      title: Casa 3D
+      icon: mdi:floor-plan
+      show_in_sidebar: true
+      require_admin: false
+
+# -----------------------------------------------------------------------------
+#  Helpers que usa el dashboard / automatización del timbre
+# -----------------------------------------------------------------------------
+input_boolean:
+  # Lo enciende la automatización del timbre → muestra la cámara superpuesta
+  # sobre el mapa 3D (modo "overlay"). Se apaga solo tras 60 s o al tocarla.
+  timbre_overlay:
+    name: Timbre · cámara superpuesta en el mapa
+    icon: mdi:doorbell-video
+
+input_select:
+  # Cómo quieres ver la cámara cuando pulsan el timbre:
+  #  - popup:   ventana modal de Browser Mod sobre todo el dashboard (recomendado)
+  #  - overlay: vídeo incrustado dentro del propio mapa 3D (no necesita Browser Mod)
+  timbre_modo_alerta:
+    name: Timbre · modo de alerta
+    icon: mdi:application-outline
+    options:
+      - popup
+      - overlay
+    initial: popup
+
+# -----------------------------------------------------------------------------
+#  Sensores de plantilla
+# -----------------------------------------------------------------------------
+template:
+  - sensor:
+      # Calendario de reciclaje sin dependencias externas: recogida cada
+      # MIÉRCOLES. Cambia "dia_recogida" (0 = lunes … 6 = domingo).
+      # Si usas la integración HACS "Waste Collection Schedule", sustituye
+      # este sensor en el dashboard por el que te cree esa integración.
+      - name: Reciclaje
+        unique_id: sensor_reciclaje_proxima_recogida
+        icon: mdi:recycle
+        state: >
+          {% set dia_recogida = 2 %}
+          {% set dias = (dia_recogida - now().weekday()) % 7 %}
+          {% if dias == 0 %}Hoy
+          {% elif dias == 1 %}Mañana
+          {% else %}En {{ dias }} días{% endif %}
+        attributes:
+          dias_restantes: >
+            {{ (2 - now().weekday()) % 7 }}
+          fecha: >
+            {{ (now() + timedelta(days=(2 - now().weekday()) % 7)).strftime('%d/%m') }}
+
+# -----------------------------------------------------------------------------
+#  Archivos incluidos (gestionados también desde la UI)
+# -----------------------------------------------------------------------------
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
