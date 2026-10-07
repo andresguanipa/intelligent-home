@@ -102,7 +102,7 @@ views:
         view_layout:
           grid-area: centro
         aspect_ratio: "16/10"
-        interactive: false          # true = orbitar y hacer zoom con el dedo
+        interactive: true           # arrastrar = girar · pellizcar/rueda = zoom (sin desplazar)
         # lights:                   # id de habitación (house.json) → entidad
         #   sala: light.sala
         # openings:                 # puertas con sensor: on = abierta
@@ -112,6 +112,10 @@ views:
           - entity: &camara_timbre camera.front_door_front_door_doorbell  # edita SOLO esta línea
             icon: mdi:doorbell-video
             at: [3.2, 21]
+          # Base de Robotina (Dreame): tocar abre sus controles
+          - entity: vacuum.robotina
+            icon: mdi:robot-vacuum
+            at: [10.5, 1.6]         # pies; ajusta x (este) e y (sur) si hace falta
         # Cámara del timbre superpuesta (modo "overlay" de automations/timbre.yaml):
         # visible mientras input_boolean.timbre_overlay = on; tocar la cierra.
         doorbell:

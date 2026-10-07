@@ -575,6 +575,16 @@
    ],
    "openings": [
     {
+     "type": "door",
+     "id": "puerta_suite",
+     "hinge": "a",
+     "swing": "n",
+     "at": [
+      0.35,
+      3.02
+     ]
+    },
+    {
      "type": "opening",
      "id": "paso_suite",
      "at": [
@@ -616,16 +626,6 @@
     16.79
    ],
    "openings": [
-    {
-     "type": "door",
-     "id": "puerta_fau",
-     "hinge": "a",
-     "swing": "s",
-     "at": [
-      0.75,
-      3.35
-     ]
-    },
     {
      "type": "opening",
      "id": "paso_bano_suite",
@@ -1149,21 +1149,6 @@
    "color": "#d8cdb8",
    "room": "vestidor",
    "elev": 5.5
-  },
-  {
-   "type": "box",
-   "name": "columna",
-   "pos": [
-    17.15,
-    16.56
-   ],
-   "size": [
-    2.27,
-    1.19,
-    8
-   ],
-   "color": "#2e2e2e",
-   "room": "pasillo"
   }
  ]
 }
