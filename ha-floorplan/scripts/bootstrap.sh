@@ -8,7 +8,7 @@
 #    configuration.yaml, así NO dependen de recursos guardados en .storage.
 #  - Descarga three.js (visor casa3d) a config/www/vendor/three/.
 #  - Descarga la integración Browser Mod a config/custom_components/.
-#  - Opcional: INSTALL_HACS=1 instala también HACS (necesita el contenedor activo).
+#  - Opcional: INSTALL_HACS=1 / INSTALL_DREAME=1 instalan HACS y la integración Dreame.
 #
 #  Versiones: por defecto "latest". Para fijarlas:
 #    LAYOUT_CARD_VERSION=v2.4.7 CARD_MOD_VERSION=v4.1.0 ./scripts/bootstrap.sh
@@ -83,9 +83,21 @@ rm -rf "$CFG/custom_components/browser_mod"
 mkdir -p "$CFG/custom_components"
 cp -r "$TMP"/hass-browser_mod-*/custom_components/browser_mod "$CFG/custom_components/browser_mod"
 
+# Integraciones comunitarias opcionales: se instalan desde el zip del release
+# (sin "wget | bash"). Activa con INSTALL_HACS=1 y/o INSTALL_DREAME=1.
+install_zip() { # <owner/repo> <versión> <asset.zip> <dominio>
+  local tag; tag="$(resolve_tag "$1" "$2")"
+  fetch "$(url_release "$1" "$tag" "$3")" "$TMP/$3"
+  rm -rf "$CFG/custom_components/$4"; mkdir -p "$CFG/custom_components/$4"
+  unzip -qo "$TMP/$3" -d "$CFG/custom_components/$4"
+}
 if [ "${INSTALL_HACS:-0}" = "1" ]; then
-  echo "→ HACS (requiere 'docker compose up -d' previo)"
-  docker exec homeassistant bash -c "wget -O - https://get.hacs.xyz | bash -"
+  echo "→ HACS → config/custom_components/hacs"
+  install_zip hacs/integration "${HACS_VERSION:-latest}" hacs.zip hacs
+fi
+if [ "${INSTALL_DREAME:-0}" = "1" ]; then
+  echo "→ Dreame Vacuum (comunitaria) → config/custom_components/dreame_vacuum"
+  install_zip Tasshack/dreame-vacuum "${DREAME_VERSION:-latest}" dreame_vacuum.zip dreame_vacuum
 fi
 
 cat <<MSG

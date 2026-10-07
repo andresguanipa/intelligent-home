@@ -62,7 +62,7 @@ Abre `http://<IP-del-host>:8123`, crea tu usuario y completa el asistente. Verá
 
 **Kiosk mode:** para volver a ver las barras, añade `?disable_km` a la URL: `http://<host>:8123/casa-3d?disable_km`.
 
-**HACS es opcional.** Si lo quieres para otras integraciones: `INSTALL_HACS=1 ./scripts/bootstrap.sh` (con el contenedor en marcha), reinicia y añade la integración en la UI. Si instalas card-mod desde HACS además, quita su entrada de `extra_module_url` para no cargarlo dos veces.
+**HACS es opcional.** Si lo quieres para otras integraciones: `INSTALL_HACS=1 ./scripts/bootstrap.sh` (descarga el zip del release; no necesita el contenedor), reinicia y añade la integración en la UI. Para el robot Dreame: `INSTALL_DREAME=1` (integración comunitaria `Tasshack/dreame-vacuum`; pide tu cuenta Dreame/Xiaomi en la UI). Si instalas card-mod desde HACS además, quita su entrada de `extra_module_url` para no cargarlo dos veces.
 
 ## 3. Probar sin dispositivos
 

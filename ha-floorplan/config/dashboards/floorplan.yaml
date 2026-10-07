@@ -142,7 +142,7 @@ views:
             square: false
             cards:
               - type: tile
-                entity: person.yo
+                entity: person.andres_guanipa
                 name: Yo
                 card_mod: *cristal
               - type: tile
