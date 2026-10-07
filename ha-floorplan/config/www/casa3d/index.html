@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Casa 3D · three.js</title>
+  <style>
+    html, body { margin: 0; height: 100%; background: #0b0d14; overflow: hidden;
+      font-family: system-ui, sans-serif; color: #dfe3ee; }
+    #stage { position: fixed; inset: 0; }
+    #panel { position: fixed; top: 12px; left: 12px; display: flex; flex-wrap: wrap; gap: 8px;
+      max-width: calc(100% - 24px); }
+    #panel button { background: rgba(20,24,36,.65); color: inherit; border: 1px solid rgba(255,255,255,.12);
+      border-radius: 999px; padding: 8px 14px; font-size: 14px; cursor: pointer; backdrop-filter: blur(8px); }
+    #panel button.on { background: rgba(255,196,92,.25); border-color: #ffc45c; color: #ffe2a8; }
+    body.noui #panel { display: none; }
+  </style>
+</head>
+<body>
+  <div id="stage"></div>
+  <div id="panel"></div>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>

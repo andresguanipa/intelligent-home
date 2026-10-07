@@ -12,6 +12,7 @@ ha-floorplan/
 ├── .gitignore · .yamllint
 ├── scripts/
 │   ├── bootstrap.sh              # prepara un clon limpio (tarjetas JS, Browser Mod, plantillas)
+│   ├── render-layers.mjs         # (opcional) genera PNG con capas de luz desde el modelo three.js
 │   └── backup.sh                 # copia del estado que NO está en Git (.storage, BD, secrets)
 ├── packages_available/
 │   └── demo.yaml                 # luces/personas de ejemplo (cópialo a config/packages/ para usarlo)
@@ -24,12 +25,13 @@ ha-floorplan/
     ├── automations.yaml · scripts.yaml · scenes.yaml   # reservados para la UI
     ├── themes/floorplan_dark.yaml
     ├── dashboards/floorplan.yaml # el dashboard 3D (layout-card + picture-elements)
-    └── www/floorplan/            # PNG del mapa (→ /local/floorplan/…)
+    ├── www/casa3d/               # modelo 3D: house.json (plano), house3d.js, casa3d-card.js (tarjeta HA), visor
+    └── www/floorplan/            # PNG opcionales generados desde casa3d (ya no los usa el dashboard)
 ```
 
 La CI (`.github/workflows/validate.yml`) ejecuta `yamllint` y `check_config` con la imagen oficial en cada push.
 
-Las imágenes incluidas son **marcadores de prueba** (un plano isométrico genérico, con fondo transparente) para que el dashboard funcione desde el primer arranque.
+El mapa es un **modelo three.js** (`www/casa3d/`) basado en el plano *Jordan Bluffs · Plan 4* (2 hab / 2 baños) y conectado en vivo a Home Assistant. Ver §6. Los PNG de `www/floorplan/` son opcionales.
 
 ---
 
@@ -96,7 +98,7 @@ En la tablet, abre Home Assistant → panel **Browser Mod** (barra lateral) → 
 
 ## 5. Adaptar las entidades de ejemplo
 
-Edita `config/dashboards/floorplan.yaml` (la cabecera lista todas). Los cambios en el dashboard **no requieren reinicio**: guarda y refresca el navegador. Los cambios en `configuration.yaml` y los packages requieren reinicio (o recarga desde *Herramientas para desarrolladores → YAML*).
+Edita `config/dashboards/floorplan.yaml` (y `"light"` en `config/www/casa3d/house.json` para las luces del mapa) (la cabecera lista todas). Los cambios en el dashboard **no requieren reinicio**: guarda y refresca el navegador. Los cambios en `configuration.yaml` y los packages requieren reinicio (o recarga desde *Herramientas para desarrolladores → YAML*).
 
 Antes de reiniciar, valida la configuración:
 
@@ -107,7 +109,43 @@ yamllint -c .yamllint .     # opcional, local
 
 ---
 
-## 6. Crear tu propio mapa 3D
+## 6. Modelo 3D con three.js conectado a Home Assistant
+
+El mapa del dashboard es la tarjeta **`custom:casa3d-card`** (`config/www/casa3d/casa3d-card.js`, cargada en `configuration.yaml`). Dibuja el modelo en vivo con three.js y lo sincroniza con las entidades: no hay PNG que regenerar al encender una luz.
+
+| Archivo (`config/www/casa3d/`) | Qué es |
+|---|---|
+| `house.json` | El plano, en pies: muros por eje con sus aberturas, habitaciones, muebles. **Fuente de verdad.** |
+| `house3d.js` | Motor three.js (muros con huecos, puertas con hoja, luces, marcadores). Lo usan la tarjeta y el visor. |
+| `casa3d-card.js` | La tarjeta de Lovelace (lee `hass`, llama a servicios). |
+| `index.html` + `app.js` | Visor independiente sin Home Assistant: `/local/casa3d/index.html` (`?on=sala,cocina` · `?ui=0` · `?orbit=0` · `?cutaway=0` · `?view=top`). |
+
+`./scripts/bootstrap.sh` descarga three.js a `www/vendor/three/` (la carpeta está en `.gitignore`); sin él la tarjeta muestra un aviso.
+
+### Qué hace la tarjeta
+- **Luces:** cada habitación con `"light": "light.xxx"` en `house.json` se ilumina cuando la entidad está `on`; respeta `brightness` y `rgb_color`. Un icono por habitación: toque = encender/apagar, mantener = más información. También se puede tocar directamente el suelo de la habitación.
+- **Puertas y ventanas con sensor:** `openings: { puerta_dorm2: binary_sensor.xxx }` abre/cierra la hoja de la puerta (`on` = abierta). Los ids están en `house.json` (`puerta_dorm2`, `puerta_wc`, `puerta_bano2`, `puerta_wh`, `puerta_fau`, `puerta_lav`, `puerta_wic`, `puerta_closet`, `puerta_closet_dorm2`).
+- **Timbre:** `doorbell: { overlay, camera }` superpone el vídeo en vivo mientras `input_boolean.timbre_overlay` está en `on`.
+- **Marcadores extra:** `markers: [{ entity, icon, at: [x, y] }]` (coordenadas en pies, como en `house.json`).
+- Opciones: `interactive` (orbitar/zoom), `cutaway` (muros delanteros bajos), `aspect_ratio`, `lights` (sobrescribe la entidad de una habitación). Ver la cabecera de `casa3d-card.js`.
+
+Tras cambiar JS o `house.json` fuerza la recarga del navegador (Ctrl+Shift+R): `/local/` se cachea.
+
+### Editar la casa
+Todo está en `house.json` (origen = eje del muro noroeste; x → este, y → sur):
+- **Muros:** `{ id, a: [x,y], b: [x,y], ext?, t?, near?, openings: [...] }`. `near` rebaja el muro que da a la cámara.
+- **Aberturas** (`at` = pies medidos desde `a`): `window` (`sill`, `head`), `opening` (paso sin hoja) y `door` (`id`, `hinge: a|b`, `swing: n|s|e|w` = lado hacia el que abre, `angle` abierta).
+- **Habitaciones:** `rects` (unión de rectángulos), `light`, `icon: [x,y]`.
+- Para comparar con el plano abre `?view=top&cutaway=0` junto al plano original.
+
+La transcripción sale del plano *Jordan Bluffs · Plan 4* (2 hab / 2 baños, 1.122 sq ft) a ~48 px/ft; las medidas de los cuartos coinciden con las rotuladas (dormitorio 2: 11'-0" × 9'-10"). Refínalas con las reales.
+
+### PNG opcionales
+`node scripts/render-layers.mjs` (requiere `npm i -g playwright`; si no encuentra Chromium: `CHROMIUM_PATH=/ruta/chrome`) genera desde el mismo modelo `casa_base.png` y `<habitación>_on.png` (1920×1200) en `www/floorplan/`, con capas recortadas por habitación y listas para `mix-blend-mode: screen`. Ya no los usa el dashboard; sirven para otros paneles o como imagen de reserva.
+
+---
+
+## 7. Alternativa: crear el mapa con otro software
 
 ### Software recomendado
 - **Sweet Home 3D** (gratis, Windows/Mac/Linux) — **el recomendado**. Es el estándar de facto en la comunidad de Home Assistant: dibujas muros desde el plano, colocas muebles, fijas una cámara aérea y renderizas varias versiones con luces encendidas/apagadas desde la *misma* posición de cámara.
@@ -140,7 +178,7 @@ Sobrescribe `casa_base.png`, `sala_on.png`, `cocina_on.png` y `dormitorio_on.png
 
 ---
 
-## 7. Convenciones del proyecto
+## 8. Convenciones del proyecto
 - Entidades de ejemplo en español y en minúsculas (`light.sala`).
 - Estilo cristal compartido con anclas YAML (`&cristal` / `*cristal`) dentro de `floorplan.yaml`.
 - Nada de secretos en Git: usa `config/secrets.yaml` (ignorado) y `!secret`.
