@@ -1,0 +1,33 @@
+# =============================================================================
+#  packages/reciclaje.yaml · calendario de reciclaje sin dependencias externas
+# -----------------------------------------------------------------------------
+#  El día de recogida es un helper editable desde la UI (o aquí).
+#  0 = lunes … 2 = miércoles … 6 = domingo. Una sola fuente para estado y atributos.
+#  Si usas la integración HACS "Waste Collection Schedule", sustituye
+#  sensor.reciclaje en el dashboard por el sensor que te cree esa integración.
+# =============================================================================
+
+input_number:
+  reciclaje_dia:
+    name: Reciclaje · día de recogida (0=lun … 6=dom)
+    icon: mdi:calendar-week
+    min: 0
+    max: 6
+    step: 1
+    mode: box
+    initial: 2   # miércoles
+
+template:
+  - sensor:
+      - name: Reciclaje
+        unique_id: sensor_reciclaje_proxima_recogida
+        icon: mdi:recycle
+        variables:
+          dias: "{{ ((states('input_number.reciclaje_dia') | int(2)) - now().weekday()) % 7 }}"
+        state: >
+          {% if dias == 0 %}Hoy
+          {% elif dias == 1 %}Mañana
+          {% else %}En {{ dias }} días{% endif %}
+        attributes:
+          dias_restantes: "{{ dias }}"
+          fecha: "{{ (now() + timedelta(days=dias)).strftime('%d/%m') }}"

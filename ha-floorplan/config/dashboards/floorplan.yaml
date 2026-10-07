@@ -2,14 +2,16 @@
 #  dashboards/floorplan.yaml · "Casa 3D" · Tablet en horizontal
 # -----------------------------------------------------------------------------
 #  URL:        http://<host>:8123/casa-3d
-#  Requiere (HACS):  layout-card · card-mod · kiosk-mode · Browser Mod
+#  Requiere:  layout-card · card-mod · kiosk-mode (cargados por
+#             frontend.extra_module_url; ver scripts/bootstrap.sh) · Browser Mod
+#  Sin dispositivos: copia packages_available/demo.yaml a config/packages/.
 #  Recargar cambios:  basta con refrescar el navegador (modo YAML).
 #
 #  ENTIDADES DE EJEMPLO — sustitúyelas por las tuyas (Herramientas para
 #  desarrolladores > Estados):
 #    weather.forecast_home        → clima (Met.no, viene por defecto)
 #    light.sala / light.cocina / light.dormitorio
-#    camera.timbre_puerta         → cámara del Nest Doorbell
+#    camera.timbre_puerta         → cámara del Nest Doorbell (ancla &camara_timbre)
 #    person.yo / person.familiar  → presencia
 #    sensor.reciclaje             → definido en configuration.yaml
 #    media_player.sala            → altavoz / TV
@@ -100,9 +102,9 @@ views:
           style: |
             /* Contenedor del mapa: fondo oscuro translúcido + bordes curvos */
             ha-card {
+              /* Sin backdrop-filter aquí: no hay nada detrás que desenfocar
+                 y es lo más costoso para una tablet modesta. */
               background: rgba(8, 10, 16, 0.65);
-              backdrop-filter: blur(18px);
-              -webkit-backdrop-filter: blur(18px);
               border: 1px solid rgba(255, 255, 255, 0.07);
               border-radius: 28px;
               box-shadow: 0 20px 60px rgba(0, 0, 0, 0.55),
@@ -217,7 +219,8 @@ views:
             icon: mdi:doorbell-video
             tap_action:
               action: more-info
-              entity: camera.timbre_puerta
+              # &camara_timbre: edita SOLO esta línea; las demás usan *camara_timbre
+              entity: &camara_timbre camera.timbre_puerta
             style:
               top: 82%
               left: 70%
@@ -255,8 +258,8 @@ views:
 
               # Vídeo en vivo del Nest Doorbell
               - type: image
-                entity: camera.timbre_puerta
-                camera_image: camera.timbre_puerta
+                entity: *camara_timbre
+                camera_image: *camara_timbre
                 camera_view: live
                 tap_action:
                   action: perform-action
@@ -272,10 +275,9 @@ views:
                   border: "2px solid #ffc45c"
                   box-shadow: "0 0 40px rgba(255, 196, 92, 0.45)"
 
-              # Rótulo
               # Rótulo: "🔔 Llaman a la puerta · <nombre de la cámara>"
               - type: state-label
-                entity: camera.timbre_puerta
+                entity: *camara_timbre
                 attribute: friendly_name
                 prefix: "🔔 Llaman a la puerta · "
                 tap_action:
