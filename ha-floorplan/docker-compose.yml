@@ -14,7 +14,7 @@ services:
     container_name: homeassistant
     # Versión fijada (reproducible): un "pull" no rompe card-mod/layout-card
     # por sorpresa. Cámbiala a propósito en .env cuando quieras actualizar.
-    image: ghcr.io/home-assistant/home-assistant:${HA_VERSION:-2026.10}
+    image: ghcr.io/home-assistant/home-assistant:${HA_VERSION:-2026.9.4}
     restart: unless-stopped
 
     # Red del host: imprescindible para el autodescubrimiento (mDNS/SSDP),
