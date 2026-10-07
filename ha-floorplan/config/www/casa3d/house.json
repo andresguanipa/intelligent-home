@@ -1,529 +1,754 @@
 {
- "_nota": "Transcripción del plano Jordan Bluffs · Plan 4 (2 hab / 2 baños, 1.122 sq ft). Unidades: pies. Origen = esquina noroeste (arriba-izquierda del plano); x → este, y → sur. Coordenadas medidas sobre el plano a ~21.6 px/ft; refínalas con mediciones reales.",
+ "_nota": "Transcripción de Jordan Bluffs · Plan 4 (2 hab / 2 baños, 1.122 sq ft). Pies; origen = eje del muro noroeste; x → este, y → sur. Muros por eje; aberturas en pies medidos desde 'a'. Puertas: hinge a|b, swing n|s|e|w (lado hacia el que abren).",
  "units": "ft",
  "wallHeight": 8,
- "wallThickness": 0.5,
+ "thickness": {
+  "ext": 0.62,
+  "int": 0.34
+ },
  "outline": {
-  "width": 47.3,
-  "depth": 24
+  "width": 46.25,
+  "depth": 23.38
  },
  "rooms": [
   {
    "id": "sala",
    "name": "Sala",
    "light": "light.sala",
-   "rect": [
-    0,
-    0,
-    22.5,
-    18
+   "rects": [
+    [
+     0.31,
+     0.31,
+     11.38,
+     17.44
+    ],
+    [
+     11.38,
+     12.33,
+     17.31,
+     17.44
+    ]
    ],
    "floor": "#d3cec2",
    "icon": [
-    5,
-    11
+    5.21,
+    14.31
    ]
   },
   {
    "id": "cocina",
    "name": "Cocina",
    "light": "light.cocina",
-   "rect": [
-    10.5,
-    0,
-    22.5,
-    12
+   "rects": [
+    [
+     11.38,
+     0.31,
+     21.88,
+     12.33
+    ]
    ],
    "floor": "#d3cec2",
-   "overlay": true
+   "icon": [
+    17.29,
+    8.27
+   ]
   },
   {
    "id": "dormitorio",
    "name": "Dormitorio 2",
    "light": "light.dormitorio",
-   "rect": [
-    22.5,
-    0,
-    34,
-    10
+   "rects": [
+    [
+     22.25,
+     0.31,
+     33.21,
+     10.25
+    ],
+    [
+     30.0,
+     10.25,
+     33.21,
+     12.12
+    ]
    ],
-   "floor": "#c29d77"
+   "floor": "#c29d77",
+   "icon": [
+    27.71,
+    5.35
+   ]
   },
   {
    "id": "suite",
    "name": "Suite principal",
    "light": "light.suite",
-   "rect": [
-    34,
-    0,
-    47.3,
-    12
+   "rects": [
+    [
+     33.54,
+     0.31,
+     46.04,
+     12.33
+    ]
    ],
-   "floor": "#c29d77"
+   "floor": "#c29d77",
+   "icon": [
+    39.79,
+    5.35
+   ]
   },
   {
    "id": "pasillo",
    "name": "Pasillo",
-   "light": null,
-   "rect": [
-    18.5,
-    12,
-    41.5,
-    17.5
+   "rects": [
+    [
+     18.44,
+     12.75,
+     25.6,
+     17.77
+    ],
+    [
+     25.6,
+     12.75,
+     40.77,
+     16.69
+    ]
    ],
    "floor": "#d3cec2"
   },
   {
    "id": "entrada",
    "name": "Entrada",
-   "light": null,
-   "rect": [
-    0,
-    18,
-    7,
-    24
+   "rects": [
+    [
+     0.31,
+     18.02,
+     6.15,
+     23.27
+    ],
+    [
+     3.23,
+     17.44,
+     5.79,
+     18.02
+    ]
    ],
    "floor": "#cfd0c8"
   },
   {
-   "id": "bano2",
-   "name": "Baño 2",
-   "light": null,
-   "rect": [
-    17.7,
-    17.5,
-    25.9,
-    24
-   ],
-   "floor": "#d9dde0"
-  },
-  {
-   "id": "lavanderia",
-   "name": "Lavandería",
-   "light": null,
-   "rect": [
-    25.9,
-    17.5,
-    33.3,
-    24
+   "id": "closet",
+   "name": "Clóset",
+   "rects": [
+    [
+     0.31,
+     13.27,
+     2.5,
+     17.58
+    ]
    ],
    "floor": "#d3cec2"
   },
   {
+   "id": "bano2",
+   "name": "Baño 2",
+   "rects": [
+    [
+     17.5,
+     18.02,
+     25.5,
+     23.27
+    ]
+   ],
+   "floor": "#d9dde0"
+  },
+  {
+   "id": "fau",
+   "name": "FAU",
+   "rects": [
+    [
+     25.73,
+     16.92,
+     29.17,
+     23.27
+    ],
+    [
+     29.38,
+     16.92,
+     32.67,
+     20.04
+    ]
+   ],
+   "floor": "#d3cec2"
+  },
+  {
+   "id": "lavanderia",
+   "name": "Lavandería",
+   "rects": [
+    [
+     29.38,
+     20.25,
+     32.67,
+     23.27
+    ]
+   ],
+   "floor": "#d3cec2"
+  },
+  {
+   "id": "wc_suite",
+   "name": "WC suite",
+   "rects": [
+    [
+     32.88,
+     16.92,
+     36.08,
+     23.27
+    ]
+   ],
+   "floor": "#d9dde0"
+  },
+  {
    "id": "bano_suite",
    "name": "Baño suite",
-   "light": null,
-   "rect": [
-    33.6,
-    17.5,
-    47.3,
-    24
+   "rects": [
+    [
+     36.29,
+     16.92,
+     46.08,
+     23.27
+    ]
    ],
    "floor": "#d9dde0"
   },
   {
    "id": "vestidor",
    "name": "Vestidor",
-   "light": null,
-   "rect": [
-    41.4,
-    12,
-    47.3,
-    17.5
+   "rects": [
+    [
+     40.94,
+     12.75,
+     46.04,
+     16.56
+    ]
    ],
    "floor": "#c29d77"
   },
   {
-   "id": "closet",
-   "name": "Clóset",
-   "light": null,
-   "rect": [
-    0,
-    13.3,
-    3,
-    18
+   "id": "calentador",
+   "name": "Calentador",
+   "rects": [
+    [
+     22.25,
+     10.35,
+     25.25,
+     12.48
+    ]
    ],
    "floor": "#d3cec2"
   },
   {
-   "id": "calentador",
-   "name": "Calentador",
-   "light": null,
-   "rect": [
-    22.5,
-    10,
-    26,
-    14
+   "id": "closet_dorm2",
+   "name": "Clóset dorm. 2",
+   "rects": [
+    [
+     25.52,
+     10.35,
+     29.75,
+     12.54
+    ]
    ],
    "floor": "#d3cec2"
   }
  ],
  "walls": [
   {
+   "id": "norte",
    "a": [
-    0,
-    0
+    0.0,
+    0.0
    ],
    "b": [
-    47.3,
-    0
+    46.25,
+    0.0
    ],
-   "ext": true
-  },
-  {
-   "a": [
-    47.3,
-    0
-   ],
-   "b": [
-    47.3,
-    24
-   ],
-   "ext": true
-  },
-  {
-   "a": [
-    47.3,
-    24
-   ],
-   "b": [
-    0,
-    24
-   ],
-   "ext": true
-  },
-  {
-   "a": [
-    0,
-    24
-   ],
-   "b": [
-    0,
-    0
-   ],
-   "ext": true
-  },
-  {
-   "a": [
-    22.5,
-    0
-   ],
-   "b": [
-    22.5,
-    9
+   "ext": true,
+   "openings": [
+    {
+     "type": "window",
+     "at": [
+      1.04,
+      3.54
+     ]
+    },
+    {
+     "type": "window",
+     "at": [
+      4.06,
+      9.06
+     ]
+    },
+    {
+     "type": "window",
+     "at": [
+      9.58,
+      12.04
+     ]
+    },
+    {
+     "type": "window",
+     "at": [
+      15.79,
+      18.29
+     ]
+    },
+    {
+     "type": "window",
+     "at": [
+      25.52,
+      28.54
+     ]
+    },
+    {
+     "type": "window",
+     "at": [
+      29.06,
+      32.04
+     ]
+    },
+    {
+     "type": "window",
+     "at": [
+      37.08,
+      40.0
+     ]
+    },
+    {
+     "type": "window",
+     "at": [
+      40.52,
+      43.5
+     ]
+    }
    ]
   },
   {
+   "id": "este",
    "a": [
-    22.5,
-    9
+    46.25,
+    0.0
    ],
    "b": [
-    22.5,
-    12.8
+    46.25,
+    23.38
+   ],
+   "ext": true,
+   "openings": [
+    {
+     "type": "window",
+     "at": [
+      1.4,
+      4.42
+     ]
+    },
+    {
+     "type": "window",
+     "at": [
+      5.46,
+      8.9
+     ]
+    },
+    {
+     "type": "window",
+     "at": [
+      9.1,
+      12.02
+     ]
+    },
+    {
+     "type": "window",
+     "at": [
+      17.54,
+      21.08
+     ]
+    }
    ]
   },
   {
+   "id": "sur",
    "a": [
-    22.5,
-    10
+    46.25,
+    23.38
    ],
    "b": [
-    34,
-    10
+    0.0,
+    23.38
+   ],
+   "ext": true,
+   "near": true
+  },
+  {
+   "id": "oeste",
+   "a": [
+    0.0,
+    23.38
+   ],
+   "b": [
+    0.0,
+    0.0
+   ],
+   "ext": true,
+   "near": true,
+   "openings": [
+    {
+     "type": "window",
+     "sill": 2,
+     "at": [
+      0.83,
+      4.79
+     ]
+    }
    ]
   },
   {
+   "id": "closet_n",
    "a": [
-    34,
-    0
+    0.0,
+    12.96
    ],
    "b": [
-    34,
-    12.8
+    2.67,
+    12.96
    ]
   },
   {
+   "id": "closet_e",
    "a": [
-    34,
-    12
+    2.67,
+    12.96
    ],
    "b": [
-    41.4,
-    12
+    2.67,
+    17.69
+   ],
+   "openings": [
+    {
+     "type": "door",
+     "id": "puerta_closet",
+     "hinge": "a",
+     "swing": "e",
+     "at": [
+      1.04,
+      3.44
+     ]
+    }
    ]
   },
   {
+   "id": "entrada_n",
    "a": [
-    41.4,
-    12
+    0.0,
+    17.69
    ],
    "b": [
-    41.4,
-    17.5
+    3.23,
+    17.69
    ]
   },
   {
+   "id": "entrada_e",
    "a": [
-    41.4,
-    17.5
+    6.25,
+    17.44
    ],
    "b": [
-    47.3,
-    17.5
+    6.25,
+    23.38
+   ],
+   "t": 0.9
+  },
+  {
+   "id": "cocina_e",
+   "a": [
+    22.08,
+    0.0
+   ],
+   "b": [
+    22.08,
+    12.6
    ]
   },
   {
+   "id": "pasillo_n",
    "a": [
-    22.5,
-    10
+    18.44,
+    12.6
    ],
    "b": [
-    22.5,
-    14
+    33.38,
+    12.6
+   ],
+   "openings": [
+    {
+     "type": "door",
+     "id": "puerta_wh",
+     "hinge": "a",
+     "swing": "s",
+     "at": [
+      4.38,
+      6.15
+     ]
+    },
+    {
+     "type": "door",
+     "id": "puerta_dorm2",
+     "hinge": "b",
+     "swing": "n",
+     "at": [
+      11.56,
+      14.38
+     ]
+    }
    ]
   },
   {
+   "id": "dorm2_s",
    "a": [
-    22.5,
-    14
+    22.08,
+    10.25
    ],
    "b": [
-    26,
-    14
+    29.83,
+    10.25
+   ],
+   "openings": [
+    {
+     "type": "door",
+     "id": "puerta_closet_dorm2",
+     "hinge": "a",
+     "swing": "n",
+     "at": [
+      4.69,
+      7.19
+     ]
+    }
    ]
   },
   {
+   "id": "wh_e",
    "a": [
-    26,
-    10
+    25.38,
+    10.25
    ],
    "b": [
-    26,
-    14
+    25.38,
+    12.6
    ]
   },
   {
+   "id": "closet_dorm2_e",
    "a": [
-    18.5,
-    17.5
+    29.83,
+    10.25
    ],
    "b": [
-    41.4,
-    17.5
+    29.83,
+    12.6
    ]
   },
   {
+   "id": "dorm2_suite",
    "a": [
-    18.5,
-    12.8
+    33.38,
+    0.0
    ],
    "b": [
-    18.5,
-    17.5
+    33.38,
+    12.5
    ]
   },
   {
+   "id": "suite_s",
    "a": [
-    17.7,
-    17.5
+    33.38,
+    12.5
    ],
    "b": [
-    17.7,
-    24
+    46.25,
+    12.5
+   ],
+   "openings": [
+    {
+     "type": "opening",
+     "id": "paso_suite",
+     "at": [
+      3.29,
+      6.83
+     ]
+    },
+    {
+     "type": "door",
+     "id": "puerta_wic",
+     "hinge": "a",
+     "swing": "n",
+     "at": [
+      7.88,
+      10.38
+     ]
+    }
    ]
   },
   {
+   "id": "wic_o",
    "a": [
-    25.9,
-    17.5
+    40.77,
+    12.5
    ],
    "b": [
-    25.9,
-    24
+    40.77,
+    16.79
    ]
   },
   {
+   "id": "pasillo_s",
    "a": [
-    33.4,
-    17.5
+    25.6,
+    16.79
    ],
    "b": [
-    33.4,
-    24
+    46.25,
+    16.79
+   ],
+   "openings": [
+    {
+     "type": "door",
+     "id": "puerta_fau",
+     "hinge": "a",
+     "swing": "s",
+     "at": [
+      0.75,
+      3.35
+     ]
+    },
+    {
+     "type": "opening",
+     "id": "paso_bano_suite",
+     "at": [
+      11.06,
+      14.6
+     ]
+    }
    ]
   },
   {
+   "id": "bano2_n",
    "a": [
-    29.5,
-    17.5
+    19.42,
+    17.88
    ],
    "b": [
-    29.5,
-    21
+    25.6,
+    17.88
    ]
   },
   {
+   "id": "bano2_o",
    "a": [
-    25.9,
-    21
+    17.31,
+    17.75
    ],
    "b": [
-    29.5,
-    21
+    17.31,
+    23.38
+   ],
+   "t": 0.38
+  },
+  {
+   "id": "bano2_e",
+   "a": [
+    25.6,
+    16.79
+   ],
+   "b": [
+    25.6,
+    23.38
+   ],
+   "openings": [
+    {
+     "type": "door",
+     "id": "puerta_bano2",
+     "hinge": "a",
+     "swing": "w",
+     "at": [
+      1.58,
+      4.08
+     ]
+    }
    ]
   },
   {
+   "id": "lav_o",
    "a": [
-    0,
-    13.3
+    29.27,
+    19.52
    ],
    "b": [
-    3,
-    13.3
+    29.27,
+    23.38
+   ],
+   "openings": [
+    {
+     "type": "door",
+     "id": "puerta_lav",
+     "hinge": "a",
+     "swing": "w",
+     "at": [
+      0.88,
+      3.48
+     ]
+    }
    ]
   },
   {
+   "id": "lav_n",
    "a": [
-    3,
-    13.3
+    29.27,
+    20.15
    ],
    "b": [
-    3,
-    18
+    32.75,
+    20.15
    ]
   },
   {
+   "id": "wc_o",
    "a": [
-    0,
-    18
+    32.75,
+    16.79
    ],
    "b": [
-    7,
-    18
+    32.75,
+    23.38
    ]
   },
   {
+   "id": "wc_e",
    "a": [
-    7,
-    18
+    36.19,
+    16.79
    ],
    "b": [
-    7,
-    24
+    36.19,
+    23.38
+   ],
+   "openings": [
+    {
+     "type": "door",
+     "id": "puerta_wc",
+     "hinge": "a",
+     "swing": "w",
+     "at": [
+      0.54,
+      3.15
+     ]
+    }
    ]
-  },
-  {
-   "a": [
-    11.5,
-    18
-   ],
-   "b": [
-    11.5,
-    20
-   ]
-  },
-  {
-   "a": [
-    11.5,
-    18
-   ],
-   "b": [
-    13,
-    18
-   ]
-  }
- ],
- "openings": [
-  {
-   "wall": 0,
-   "type": "window",
-   "at": [
-    3.5,
-    7.5
-   ],
-   "sill": 3
-  },
-  {
-   "wall": 0,
-   "type": "window",
-   "at": [
-    9,
-    12
-   ],
-   "sill": 3
-  },
-  {
-   "wall": 0,
-   "type": "window",
-   "at": [
-    26,
-    29.5
-   ],
-   "sill": 3
-  },
-  {
-   "wall": 0,
-   "type": "window",
-   "at": [
-    31,
-    33.5
-   ],
-   "sill": 3
-  },
-  {
-   "wall": 0,
-   "type": "window",
-   "at": [
-    36,
-    39
-   ],
-   "sill": 3
-  },
-  {
-   "wall": 0,
-   "type": "window",
-   "at": [
-    40,
-    44
-   ],
-   "sill": 3
-  },
-  {
-   "wall": 1,
-   "type": "window",
-   "at": [
-    1,
-    6.5
-   ],
-   "sill": 3
-  },
-  {
-   "wall": 1,
-   "type": "window",
-   "at": [
-    14,
-    16
-   ],
-   "sill": 3
-  },
-  {
-   "wall": 1,
-   "type": "window",
-   "at": [
-    20,
-    23.5
-   ],
-   "sill": 3
-  },
-  {
-   "wall": 3,
-   "type": "window",
-   "at": [
-    1,
-    5
-   ],
-   "sill": 2
   }
  ],
  "furniture": [
@@ -531,81 +756,129 @@
    "type": "box",
    "name": "isla",
    "pos": [
-    11.8,
-    6.3
+    11.4,
+    5.94
    ],
    "size": [
-    3.5,
-    6.5,
+    3.54,
+    6.54,
     3
    ],
    "color": "#553f33",
-   "top": "#e2e3dd",
-   "room": "cocina"
+   "room": "cocina",
+   "top": "#e4e5df"
   },
   {
    "type": "box",
-   "name": "mueble_L_norte",
+   "name": "mueble_norte",
    "pos": [
-    10.5,
-    0.3
+    12.19,
+    0.31
    ],
    "size": [
-    12,
-    2,
+    9.69,
+    2.02,
     3
    ],
    "color": "#4f3a30",
-   "top": "#e4e5df",
-   "room": "cocina"
+   "room": "cocina",
+   "top": "#e4e5df"
   },
   {
    "type": "box",
-   "name": "mueble_L_este",
+   "name": "mueble_este",
    "pos": [
-    20.3,
-    2.3
+    19.9,
+    2.33
    ],
    "size": [
-    2,
-    7.5,
+    1.98,
+    6.77,
     3
    ],
    "color": "#4f3a30",
-   "top": "#e4e5df",
-   "room": "cocina"
+   "room": "cocina",
+   "top": "#e4e5df"
   },
   {
    "type": "box",
-   "name": "alacena",
+   "name": "fregadero",
    "pos": [
-    10.5,
-    0.3
+    15.62,
+    0.46
    ],
    "size": [
-    12,
-    1.1,
-    2.5
+    2.92,
+    1.77,
+    0.1
    ],
-   "elev": 5.3,
+   "color": "#7f8a96",
+   "room": "cocina",
+   "elev": 3.12
+  },
+  {
+   "type": "box",
+   "name": "estufa",
+   "pos": [
+    19.58,
+    5.15
+   ],
+   "size": [
+    2.29,
+    2.5,
+    0.1
+   ],
+   "color": "#4a4d52",
+   "room": "cocina",
+   "elev": 3.12
+  },
+  {
+   "type": "box",
+   "name": "alacena_a",
+   "pos": [
+    12.19,
+    0.31
+   ],
+   "size": [
+    3.54,
+    1.29,
+    2.2
+   ],
    "color": "#5d4636",
-   "room": "cocina"
+   "room": "cocina",
+   "elev": 5.3
+  },
+  {
+   "type": "box",
+   "name": "alacena_b",
+   "pos": [
+    18.33,
+    0.31
+   ],
+   "size": [
+    3.54,
+    1.29,
+    2.2
+   ],
+   "color": "#5d4636",
+   "room": "cocina",
+   "elev": 5.3
   },
   {
    "type": "box",
    "name": "refrigerador",
    "pos": [
-    20.3,
-    9.8
+    18.85,
+    9.1
    ],
    "size": [
-    2.5,
-    2.7,
+    3.02,
+    3.02,
     6
    ],
    "color": "#9a9ba0",
-   "top": "#b8b9be",
-   "room": "cocina"
+   "room": "cocina",
+   "top": "#b8b9be"
   },
   {
    "type": "box",
@@ -641,7 +914,7 @@
    "type": "box",
    "name": "sofa",
    "pos": [
-    0.3,
+    0.4,
     3.2
    ],
    "size": [
@@ -656,21 +929,20 @@
    "type": "bed",
    "name": "cama_dorm2",
    "pos": [
-    24.8,
+    25.2,
     0.3
    ],
    "size": [
     5,
-    6.5
+    6.8
    ],
-   "head": "n",
    "room": "dormitorio"
   },
   {
    "type": "box",
    "name": "buro_dorm2_a",
    "pos": [
-    23,
+    23.4,
     0.4
    ],
    "size": [
@@ -685,7 +957,7 @@
    "type": "box",
    "name": "buro_dorm2_b",
    "pos": [
-    30.7,
+    30.9,
     0.4
    ],
    "size": [
@@ -700,14 +972,13 @@
    "type": "bed",
    "name": "cama_suite",
    "pos": [
-    37,
+    36.8,
     0.3
    ],
    "size": [
     6,
     7
    ],
-   "head": "n",
    "room": "suite"
   },
   {
@@ -729,7 +1000,7 @@
    "type": "box",
    "name": "buro_suite_b",
    "pos": [
-    44.4,
+    43.0,
     0.4
    ],
    "size": [
@@ -744,13 +1015,13 @@
    "type": "box",
    "name": "banera",
    "pos": [
-    18.2,
-    19.2
+    17.6,
+    18.27
    ],
    "size": [
-    2.5,
-    5,
-    1.8
+    2.08,
+    4.58,
+    1.7
    ],
    "color": "#bcd4e6",
    "room": "bano2"
@@ -759,12 +1030,12 @@
    "type": "box",
    "name": "inodoro_b2",
    "pos": [
-    21,
-    21.8
+    20.83,
+    20.56
    ],
    "size": [
-    1.4,
-    2,
+    1.25,
+    1.77,
     1.3
    ],
    "color": "#f2f2f2",
@@ -774,27 +1045,28 @@
    "type": "box",
    "name": "lavabo_b2",
    "pos": [
-    23.3,
-    21.8
-   ],
-   "size": [
-    2,
-    1.8,
-    2.8
-   ],
-   "color": "#e7e4dc",
-   "room": "bano2"
-  },
-  {
-   "type": "box",
-   "name": "lavadora",
-   "pos": [
-    27,
+    22.92,
     21.4
    ],
    "size": [
-    2.2,
-    2.2,
+    2.5,
+    1.77,
+    2.8
+   ],
+   "color": "#e7e4dc",
+   "room": "bano2",
+   "top": "#cfe3ee"
+  },
+  {
+   "type": "box",
+   "name": "lavadora_secadora",
+   "pos": [
+    29.79,
+    20.67
+   ],
+   "size": [
+    2.29,
+    2.08,
     3
    ],
    "color": "#f4f4f4",
@@ -802,59 +1074,92 @@
   },
   {
    "type": "box",
-   "name": "inodoro_bs",
+   "name": "inodoro_wc",
    "pos": [
-    34.6,
-    21.8
+    33.85,
+    20.56
    ],
    "size": [
-    1.4,
-    2,
+    1.35,
+    1.77,
     1.3
    ],
    "color": "#f2f2f2",
-   "room": "bano_suite"
+   "room": "wc_suite"
   },
   {
    "type": "box",
-   "name": "lavabos_bs",
+   "name": "lavabos_suite",
    "pos": [
-    37.8,
-    22.4
+    36.35,
+    21.4
    ],
    "size": [
-    5.2,
-    1.6,
+    6.77,
+    1.77,
     2.8
    ],
    "color": "#e7e4dc",
-   "room": "bano_suite"
+   "room": "bano_suite",
+   "top": "#cfe3ee"
   },
   {
    "type": "box",
    "name": "ducha",
    "pos": [
-    44.6,
-    19.5
+    43.23,
+    17.23
    ],
    "size": [
-    2.7,
-    4.5,
-    0.2
+    2.6,
+    5.83,
+    0.15
    ],
    "color": "#cfe3ee",
    "room": "bano_suite"
   },
   {
    "type": "box",
-   "name": "columna",
+   "name": "repisa_wic_e",
    "pos": [
-    17.7,
-    17.5
+    45.21,
+    12.75
    ],
    "size": [
-    1.1,
-    1.1,
+    0.83,
+    3.02,
+    0.15
+   ],
+   "color": "#d8cdb8",
+   "room": "vestidor",
+   "elev": 5.5
+  },
+  {
+   "type": "box",
+   "name": "repisa_wic_s",
+   "pos": [
+    40.94,
+    15.77
+   ],
+   "size": [
+    5.1,
+    0.79,
+    0.15
+   ],
+   "color": "#d8cdb8",
+   "room": "vestidor",
+   "elev": 5.5
+  },
+  {
+   "type": "box",
+   "name": "columna",
+   "pos": [
+    17.15,
+    16.56
+   ],
+   "size": [
+    2.27,
+    1.19,
     8
    ],
    "color": "#2e2e2e",
