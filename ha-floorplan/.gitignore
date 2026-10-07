@@ -1,0 +1,22 @@
+# Variables locales y secretos (no versionar)
+.env
+config/secrets.yaml
+
+# Estado de Home Assistant
+config/.storage/
+config/.cloud/
+config/home-assistant_v2.db*
+config/home-assistant.log*
+config/.HA_VERSION
+config/tts/
+config/deps/
+config/__pycache__/
+config/backups/
+
+# Descargado por scripts/bootstrap.sh (se reinstala con el script)
+config/custom_components/
+config/www/vendor/
+config/www/community/
+
+# Copias de seguridad generadas por scripts/backup.sh
+backups/

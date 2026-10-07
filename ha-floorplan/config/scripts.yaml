@@ -1,0 +1,3 @@
+# Scripts creados desde la UI (HA reescribe este archivo y borra los
+# comentarios). Los scripts "de código" viven en packages/.
+{}

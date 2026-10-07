@@ -1,0 +1,45 @@
+# =============================================================================
+#  Home Assistant Core · "Config as Code" · 3D Floorplan Dashboard
+# -----------------------------------------------------------------------------
+#  Arranque:      docker compose up -d
+#  Logs:          docker compose logs -f homeassistant
+#  Reinicio:      docker compose restart homeassistant
+#  Actualizar:    cambia HA_VERSION en .env → docker compose pull && docker compose up -d
+#  UI:            http://<IP-del-host>:8123
+#  Variables:     copia .env.example a .env (ver ese archivo)
+# =============================================================================
+
+services:
+  homeassistant:
+    container_name: homeassistant
+    # Versión fijada (reproducible): un "pull" no rompe card-mod/layout-card
+    # por sorpresa. Cámbiala a propósito en .env cuando quieras actualizar.
+    image: ghcr.io/home-assistant/home-assistant:${HA_VERSION:-2026.9.4}
+    restart: unless-stopped
+
+    # Red del host: imprescindible para el autodescubrimiento (mDNS/SSDP),
+    # Chromecast, HomeKit y el streaming WebRTC de la cámara Nest.
+    # (En Docker Desktop para Mac/Windows, activa "Enable host networking"
+    #  en Settings > Resources > Network, o cambia a "ports: - 8123:8123".)
+    network_mode: host
+
+    environment:
+      # Zona horaria del contenedor; configuration.yaml usa la misma
+      # (!env_var TZ) para tener una sola fuente de verdad.
+      - TZ=${TZ:-America/Denver}
+
+    volumes:
+      # Toda la configuración versionable vive en ./config  →  /config
+      # (incluye www/, que HA sirve en la URL /local/)
+      - ./config:/config
+      # Sincroniza el reloj con el host (solo en hosts Linux).
+      - /etc/localtime:/etc/localtime:ro
+      # Opcional (Linux): necesario para la integración Bluetooth.
+      # - /run/dbus:/run/dbus:ro
+
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "-o", "/dev/null", "http://localhost:8123/manifest.json"]
+      interval: 60s
+      timeout: 10s
+      retries: 5
+      start_period: 120s

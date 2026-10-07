@@ -1,0 +1,353 @@
+# =============================================================================
+#  dashboards/floorplan.yaml · "Casa 3D" · Tablet en horizontal
+# -----------------------------------------------------------------------------
+#  URL:        http://<host>:8123/casa-3d
+#  Requiere:  layout-card · card-mod · kiosk-mode (cargados por
+#             frontend.extra_module_url; ver scripts/bootstrap.sh) · Browser Mod
+#  Sin dispositivos: copia packages_available/demo.yaml a config/packages/.
+#  Recargar cambios:  basta con refrescar el navegador (modo YAML).
+#
+#  ENTIDADES DE EJEMPLO — sustitúyelas por las tuyas (Herramientas para
+#  desarrolladores > Estados):
+#    weather.forecast_home        → clima (Met.no, viene por defecto)
+#    light.sala / light.cocina / light.dormitorio
+#    camera.timbre_puerta         → cámara del Nest Doorbell (ancla &camara_timbre)
+#    person.yo / person.familiar  → presencia
+#    sensor.reciclaje             → definido en configuration.yaml
+#    media_player.sala            → altavoz / TV
+# =============================================================================
+
+title: Casa 3D
+
+# --- kiosk-mode --------------------------------------------------------------
+# Oculta la barra superior y la lateral para un modo "pantalla de pared".
+# Para editar/depurar, abre la URL con ?disable_km  (p. ej. /casa-3d?disable_km)
+kiosk_mode:
+  hide_header: true
+  hide_sidebar: true
+
+views:
+  - title: Planta
+    path: planta
+    icon: mdi:home-floor-1
+    theme: floorplan_dark
+
+    # --- layout-card: vista en cuadrícula CSS Grid -----------------------------
+    type: custom:grid-layout
+    layout:
+      # 1fr 2fr 1fr = 25 % · 50 % · 25 % del espacio útil, descontando los
+      # huecos (usar 25% 50% 25% literales + gap desbordaría horizontalmente).
+      grid-template-columns: 1fr 2fr 1fr
+      grid-template-rows: auto
+      grid-template-areas: |
+        "izquierda centro derecha"
+      grid-gap: 16px
+      padding: 16px
+      align-items: start
+      # Responsivo: en vertical o pantallas estrechas, una sola columna
+      # con el mapa arriba.
+      mediaquery:
+        "(max-width: 900px), (orientation: portrait)":
+          grid-template-columns: 100%
+          grid-template-areas: |
+            "centro"
+            "izquierda"
+            "derecha"
+
+    cards:
+      # =======================================================================
+      #  COLUMNA IZQUIERDA (25 %) · Clima grande + pronóstico
+      # =======================================================================
+      - type: vertical-stack
+        view_layout:
+          grid-area: izquierda
+        cards:
+          # Estado actual + pronóstico diario
+          - type: weather-forecast
+            entity: weather.forecast_home
+            show_current: true
+            show_forecast: true
+            forecast_type: daily
+            forecast_slots: 5
+            # Estilo "cristal" reutilizable: el ancla &cristal se reutiliza
+            # abajo con *cristal para no repetir el CSS.
+            card_mod: &cristal
+              style: |
+                ha-card {
+                  background: rgba(20, 24, 36, 0.55);
+                  backdrop-filter: blur(16px) saturate(140%);
+                  -webkit-backdrop-filter: blur(16px) saturate(140%);
+                  border: 1px solid rgba(255, 255, 255, 0.08);
+                  border-radius: 24px;
+                  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+                }
+
+          # Pronóstico por horas (tira compacta)
+          - type: weather-forecast
+            entity: weather.forecast_home
+            show_current: false
+            show_forecast: true
+            forecast_type: hourly
+            forecast_slots: 6
+            card_mod: *cristal
+
+      # =======================================================================
+      #  COLUMNA CENTRAL (50 %) · Mapa 3D interactivo (picture-elements)
+      # =======================================================================
+      - type: picture-elements
+        view_layout:
+          grid-area: centro
+        image: /local/floorplan/casa_base.png
+        card_mod:
+          style: |
+            /* Contenedor del mapa: fondo oscuro translúcido + bordes curvos */
+            ha-card {
+              /* Sin backdrop-filter aquí: no hay nada detrás que desenfocar
+                 y es lo más costoso para una tablet modesta. */
+              background: rgba(8, 10, 16, 0.65);
+              border: 1px solid rgba(255, 255, 255, 0.07);
+              border-radius: 28px;
+              box-shadow: 0 20px 60px rgba(0, 0, 0, 0.55),
+                          inset 0 1px 0 rgba(255, 255, 255, 0.05);
+              overflow: hidden;
+              padding: 12px;
+            }
+            /* La imagen base con esquinas redondeadas a juego */
+            #root > img { border-radius: 20px; }
+            /* Iconos de habitación: "píldora" de cristal */
+            hui-state-icon-element {
+              background: rgba(10, 12, 18, 0.55);
+              border-radius: 50%;
+              padding: 6px;
+              backdrop-filter: blur(6px);
+            }
+        elements:
+          # -------------------------------------------------------------------
+          #  CAPAS DE LUZ (state_image)
+          #  Cada PNG tiene el MISMO tamaño que casa_base.png y es transparente
+          #  salvo el "brillo" de su habitación. Se colocan a pantalla
+          #  completa (top/left 50 % + width 100 %) y se apilan encima del mapa.
+          #  pointer-events: none → no bloquean los toques a los iconos.
+          # -------------------------------------------------------------------
+
+          # 1) Luz de la SALA
+          - type: image
+            entity: light.sala
+            image: /local/floorplan/transparente.png
+            state_image:
+              "on": /local/floorplan/sala_on.png
+              "off": /local/floorplan/transparente.png
+            tap_action:
+              action: none
+            hold_action:
+              action: none
+            style: &capa_luz
+              top: 50%
+              left: 50%
+              width: 100%
+              pointer-events: none
+              mix-blend-mode: screen   # el brillo "ilumina" el render
+              transition: opacity 0.6s ease
+
+          # 2) Luz de la COCINA
+          - type: image
+            entity: light.cocina
+            image: /local/floorplan/transparente.png
+            state_image:
+              "on": /local/floorplan/cocina_on.png
+              "off": /local/floorplan/transparente.png
+            tap_action:
+              action: none
+            hold_action:
+              action: none
+            style: *capa_luz
+
+          # 3) Luz del DORMITORIO
+          - type: image
+            entity: light.dormitorio
+            image: /local/floorplan/transparente.png
+            state_image:
+              "on": /local/floorplan/dormitorio_on.png
+              "off": /local/floorplan/transparente.png
+            tap_action:
+              action: none
+            hold_action:
+              action: none
+            style: *capa_luz
+
+          # -------------------------------------------------------------------
+          #  ZONAS TÁCTILES (iconos sobre cada habitación)
+          #  Toque = encender/apagar · Mantener = más info (brillo, color)
+          #  Coordenadas en % calculadas para la imagen de prueba; ajústalas
+          #  a tu render (centro de cada habitación).
+          # -------------------------------------------------------------------
+          - type: state-icon
+            entity: light.sala
+            tap_action:
+              action: toggle
+            hold_action:
+              action: more-info
+            style:
+              top: 41%
+              left: 54%
+              "--mdc-icon-size": 34px
+
+          - type: state-icon
+            entity: light.cocina
+            tap_action:
+              action: toggle
+            hold_action:
+              action: more-info
+            style:
+              top: 64%
+              left: 79%
+              "--mdc-icon-size": 34px
+
+          - type: state-icon
+            entity: light.dormitorio
+            tap_action:
+              action: toggle
+            hold_action:
+              action: more-info
+            style:
+              top: 57%
+              left: 31%
+              "--mdc-icon-size": 34px
+
+          # Acceso manual a la cámara del timbre (junto a la entrada)
+          - type: icon
+            icon: mdi:doorbell-video
+            tap_action:
+              action: more-info
+              # &camara_timbre: edita SOLO esta línea; las demás usan *camara_timbre
+              entity: &camara_timbre camera.timbre_puerta
+            style:
+              top: 82%
+              left: 70%
+              color: "#9aa3b8"
+              "--mdc-icon-size": 30px
+
+          # -------------------------------------------------------------------
+          #  CONTENEDOR OCULTO · CÁMARA DEL TIMBRE SUPERPUESTA (modo "overlay")
+          #  Invisible mientras input_boolean.timbre_overlay = off.
+          #  La automatización lo enciende al pulsar el timbre y lo apaga a los
+          #  60 s. Tocar el vídeo lo cierra antes. (El modo "popup" usa
+          #  Browser Mod en su lugar → ver automations.yaml.)
+          # -------------------------------------------------------------------
+          - type: conditional
+            conditions:
+              - entity: input_boolean.timbre_overlay
+                state: "on"
+            elements:
+              # Velo oscuro sobre todo el mapa
+              - type: image
+                image: /local/floorplan/transparente.png
+                tap_action:
+                  action: perform-action
+                  perform_action: input_boolean.turn_off
+                  target:
+                    entity_id: input_boolean.timbre_overlay
+                style:
+                  top: 50%
+                  left: 50%
+                  width: 100%
+                  height: 100%
+                  background: "rgba(5, 6, 10, 0.72)"
+                  backdrop-filter: blur(6px)
+                  border-radius: 20px
+
+              # Vídeo en vivo del Nest Doorbell
+              - type: image
+                entity: *camara_timbre
+                camera_image: *camara_timbre
+                camera_view: live
+                tap_action:
+                  action: perform-action
+                  perform_action: input_boolean.turn_off
+                  target:
+                    entity_id: input_boolean.timbre_overlay
+                style:
+                  top: 50%
+                  left: 50%
+                  width: 78%
+                  border-radius: 18px
+                  overflow: hidden
+                  border: "2px solid #ffc45c"
+                  box-shadow: "0 0 40px rgba(255, 196, 92, 0.45)"
+
+              # Rótulo: "🔔 Llaman a la puerta · <nombre de la cámara>"
+              - type: state-label
+                entity: *camara_timbre
+                attribute: friendly_name
+                prefix: "🔔 Llaman a la puerta · "
+                tap_action:
+                  action: none
+                style:
+                  top: 9%
+                  left: 50%
+                  font-size: 22px
+                  font-weight: 600
+                  color: "#ffc45c"
+                  white-space: nowrap
+                  letter-spacing: 0.5px
+
+      # =======================================================================
+      #  COLUMNA DERECHA (25 %) · Información minimalista
+      # =======================================================================
+      - type: vertical-stack
+        view_layout:
+          grid-area: derecha
+        cards:
+          # --- Presencia -----------------------------------------------------
+          - type: heading
+            heading: Presencia
+            heading_style: subtitle
+          - type: grid
+            columns: 2
+            square: false
+            cards:
+              - type: tile
+                entity: person.yo
+                name: Yo
+                card_mod: *cristal
+              - type: tile
+                entity: person.familiar
+                name: Familia
+                card_mod: *cristal
+
+          # --- Reciclaje -----------------------------------------------------
+          - type: heading
+            heading: Hogar
+            heading_style: subtitle
+          - type: tile
+            entity: sensor.reciclaje
+            name: Reciclaje
+            icon: mdi:recycle
+            color: green
+            card_mod:
+              style: |
+                ha-card {
+                  background: rgba(20, 24, 36, 0.55);
+                  backdrop-filter: blur(16px);
+                  -webkit-backdrop-filter: blur(16px);
+                  border-radius: 24px;
+                  border: 1px solid
+                    {{ 'rgba(76, 217, 100, 0.65)'
+                       if states('sensor.reciclaje') in ['Hoy', 'Mañana']
+                       else 'rgba(255, 255, 255, 0.08)' }};
+                }
+
+          # --- Multimedia ----------------------------------------------------
+          - type: heading
+            heading: Multimedia
+            heading_style: subtitle
+          - type: media-control
+            entity: media_player.sala
+            card_mod:
+              style: |
+                ha-card {
+                  border-radius: 24px;
+                  overflow: hidden;
+                  border: 1px solid rgba(255, 255, 255, 0.08);
+                  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+                }
