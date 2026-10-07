@@ -44,13 +44,13 @@ automation:
     mode: restart
 
     variables:
-      camara: camera.timbre_puerta
+      camara: camera.front_door_front_door_doorbell
       tablet: tablet_salon       # Browser ID registrado en Browser Mod (CLAUDE.md §4.3)
       segundos: 60
 
     triggers:
       - trigger: state
-        entity_id: event.timbre_puerta_chime
+        entity_id: event.front_door_front_door_doorbell_chime
         # Ignora el cambio al arrancar HA o al reconectar la integración
         not_from:
           - unavailable

@@ -377,7 +377,7 @@
     23.38
    ],
    "b": [
-    0.0,
+    6.25,
     23.38
    ],
    "ext": true,
@@ -387,7 +387,7 @@
    "id": "oeste",
    "a": [
     0.0,
-    23.38
+    17.69
    ],
    "b": [
     0.0,
@@ -395,16 +395,7 @@
    ],
    "ext": true,
    "near": true,
-   "openings": [
-    {
-     "type": "window",
-     "sill": 2,
-     "at": [
-      0.83,
-      4.79
-     ]
-    }
-   ]
+   "openings": []
   },
   {
    "id": "closet_n",
@@ -617,10 +608,8 @@
    ],
    "openings": [
     {
-     "type": "door",
-     "id": "puerta_fau",
-     "hinge": "a",
-     "swing": "s",
+     "type": "opening",
+     "id": "paso_fau",
      "at": [
       0.75,
       3.35
@@ -639,7 +628,7 @@
   {
    "id": "bano2_n",
    "a": [
-    19.42,
+    17.31,
     17.88
    ],
    "b": [
@@ -746,6 +735,75 @@
      "at": [
       0.54,
       3.15
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fau_w",
+   "a": [
+    29.27,
+    16.79
+   ],
+   "b": [
+    29.27,
+    19.52
+   ],
+   "openings": [
+    {
+     "type": "door",
+     "id": "puerta_fau2",
+     "hinge": "a",
+     "swing": "w",
+     "at": [
+      0.1,
+      2.63
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pasillo_div",
+   "a": [
+    32.75,
+    12.5
+   ],
+   "b": [
+    32.75,
+    16.79
+   ],
+   "openings": [
+    {
+     "type": "door",
+     "id": "puerta_pasillo",
+     "hinge": "a",
+     "swing": "e",
+     "at": [
+      0.7,
+      3.4
+     ]
+    }
+   ]
+  },
+  {
+   "id": "entrada_puerta",
+   "a": [
+    3.23,
+    17.69
+   ],
+   "b": [
+    6.25,
+    17.69
+   ],
+   "openings": [
+    {
+     "type": "door",
+     "id": "puerta_entrada",
+     "hinge": "a",
+     "swing": "n",
+     "at": [
+      0.2,
+      2.8
      ]
     }
    ]
@@ -879,51 +937,6 @@
    "color": "#9a9ba0",
    "room": "cocina",
    "top": "#b8b9be"
-  },
-  {
-   "type": "box",
-   "name": "alfombra",
-   "pos": [
-    1.8,
-    4.6
-   ],
-   "size": [
-    4.8,
-    4.6,
-    0.05
-   ],
-   "color": "#c9b99c",
-   "room": "sala"
-  },
-  {
-   "type": "box",
-   "name": "mesa_centro",
-   "pos": [
-    2.6,
-    5.4
-   ],
-   "size": [
-    2.6,
-    3,
-    1.4
-   ],
-   "color": "#87603f",
-   "room": "sala"
-  },
-  {
-   "type": "box",
-   "name": "sofa",
-   "pos": [
-    0.4,
-    3.2
-   ],
-   "size": [
-    2.8,
-    7.5,
-    2.4
-   ],
-   "color": "#6b7b90",
-   "room": "sala"
   },
   {
    "type": "bed",
@@ -1149,21 +1162,6 @@
    "color": "#d8cdb8",
    "room": "vestidor",
    "elev": 5.5
-  },
-  {
-   "type": "box",
-   "name": "columna",
-   "pos": [
-    17.15,
-    16.56
-   ],
-   "size": [
-    2.27,
-    1.19,
-    8
-   ],
-   "color": "#2e2e2e",
-   "room": "pasillo"
   }
  ]
 }

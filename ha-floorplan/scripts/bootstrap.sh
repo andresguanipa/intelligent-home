@@ -8,7 +8,7 @@
 #    configuration.yaml, así NO dependen de recursos guardados en .storage.
 #  - Descarga three.js (visor casa3d) a config/www/vendor/three/.
 #  - Descarga la integración Browser Mod a config/custom_components/.
-#  - Opcional: INSTALL_HACS=1 instala también HACS (necesita el contenedor activo).
+#  - Opcional: INSTALL_HACS=1 / INSTALL_DREAME=1 instalan HACS y la integración Dreame.
 #
 #  Versiones: por defecto "latest". Para fijarlas:
 #    LAYOUT_CARD_VERSION=v2.4.7 CARD_MOD_VERSION=v4.1.0 ./scripts/bootstrap.sh
@@ -25,13 +25,27 @@ KIOSK_MODE_VERSION="${KIOSK_MODE_VERSION:-latest}"
 BROWSER_MOD_VERSION="${BROWSER_MOD_VERSION:-latest}"
 THREE_VERSION="${THREE_VERSION:-0.170.0}"   # visor casa3d (necesita OrbitControls: fija la versión)
 
-# url_release <owner/repo> <versión> <archivo>
+# resolve_tag <owner/repo> <versión> → etiqueta concreta ("latest" = último release)
+resolve_tag() {
+  if [ "$2" = "latest" ]; then
+    curl -fsSLI -o /dev/null -w '%{url_effective}' "https://github.com/$1/releases/latest" | sed 's#.*/##'
+  else
+    echo "$2"
+  fi
+}
+
+# url_release <owner/repo> <versión> <archivo>  (assets del release)
 url_release() {
   if [ "$2" = "latest" ]; then
     echo "https://github.com/$1/releases/latest/download/$3"
   else
     echo "https://github.com/$1/releases/download/$2/$3"
   fi
+}
+
+# url_raw <owner/repo> <versión> <ruta>  (archivo commiteado en esa etiqueta)
+url_raw() {
+  echo "https://raw.githubusercontent.com/$1/$(resolve_tag "$1" "$2")/$3"
 }
 
 fetch() { # <url> <destino>
@@ -45,8 +59,8 @@ echo "→ Plantillas locales"
 
 echo "→ Tarjetas de Lovelace → config/www/vendor/"
 mkdir -p "$VENDOR"
-fetch "$(url_release thomasloven/lovelace-layout-card "$LAYOUT_CARD_VERSION" layout-card.js)" "$VENDOR/layout-card.js"
-fetch "$(url_release thomasloven/lovelace-card-mod "$CARD_MOD_VERSION" card-mod.js)" "$VENDOR/card-mod.js"
+fetch "$(url_raw thomasloven/lovelace-layout-card "$LAYOUT_CARD_VERSION" layout-card.js)" "$VENDOR/layout-card.js"
+fetch "$(url_raw thomasloven/lovelace-card-mod "$CARD_MOD_VERSION" card-mod.js)" "$VENDOR/card-mod.js"
 fetch "$(url_release NemesisRE/kiosk-mode "$KIOSK_MODE_VERSION" kiosk-mode.js)" "$VENDOR/kiosk-mode.js"
 
 echo "→ three.js $THREE_VERSION → config/www/vendor/three/"
@@ -62,13 +76,28 @@ rm -rf "$TMP3"
 
 echo "→ Browser Mod → config/custom_components/browser_mod"
 TMP="$(mktemp -d)"; trap 'rm -rf "$TMP"' EXIT
-fetch "$(url_release thomasloven/hass-browser_mod "$BROWSER_MOD_VERSION" browser_mod.zip)" "$TMP/browser_mod.zip"
-mkdir -p "$CFG/custom_components/browser_mod"
-unzip -qo "$TMP/browser_mod.zip" -d "$CFG/custom_components/browser_mod"
+BM_TAG="$(resolve_tag thomasloven/hass-browser_mod "$BROWSER_MOD_VERSION")"
+fetch "https://github.com/thomasloven/hass-browser_mod/archive/refs/tags/$BM_TAG.zip" "$TMP/browser_mod.zip"
+unzip -qo "$TMP/browser_mod.zip" -d "$TMP"
+rm -rf "$CFG/custom_components/browser_mod"
+mkdir -p "$CFG/custom_components"
+cp -r "$TMP"/hass-browser_mod-*/custom_components/browser_mod "$CFG/custom_components/browser_mod"
 
+# Integraciones comunitarias opcionales: se instalan desde el zip del release
+# (sin "wget | bash"). Activa con INSTALL_HACS=1 y/o INSTALL_DREAME=1.
+install_zip() { # <owner/repo> <versión> <asset.zip> <dominio>
+  local tag; tag="$(resolve_tag "$1" "$2")"
+  fetch "$(url_release "$1" "$tag" "$3")" "$TMP/$3"
+  rm -rf "$CFG/custom_components/$4"; mkdir -p "$CFG/custom_components/$4"
+  unzip -qo "$TMP/$3" -d "$CFG/custom_components/$4"
+}
 if [ "${INSTALL_HACS:-0}" = "1" ]; then
-  echo "→ HACS (requiere 'docker compose up -d' previo)"
-  docker exec homeassistant bash -c "wget -O - https://get.hacs.xyz | bash -"
+  echo "→ HACS → config/custom_components/hacs"
+  install_zip hacs/integration "${HACS_VERSION:-latest}" hacs.zip hacs
+fi
+if [ "${INSTALL_DREAME:-0}" = "1" ]; then
+  echo "→ Dreame Vacuum (comunitaria) → config/custom_components/dreame_vacuum"
+  install_zip Tasshack/dreame-vacuum "${DREAME_VERSION:-latest}" dreame_vacuum.zip dreame_vacuum
 fi
 
 cat <<MSG

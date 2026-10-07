@@ -13,9 +13,9 @@
 #    light.sala / light.cocina / light.dormitorio / light.suite
 #    camera.timbre_puerta         → cámara del Nest Doorbell (ancla &camara_timbre)
 #  El mapa es la tarjeta custom:casa3d-card (modelo three.js, ver CLAUDE.md §6).
-#    person.yo / person.familiar  → presencia
+#    person.andres_guanipa        → presencia
 #    sensor.reciclaje             → definido en configuration.yaml
-#    media_player.sala            → altavoz / TV
+#    vacuum.robotina / camera.robotina_map → robot Dreame (Hogar)
 # =============================================================================
 
 title: Casa 3D
@@ -102,16 +102,23 @@ views:
         view_layout:
           grid-area: centro
         aspect_ratio: "16/10"
-        interactive: false          # true = orbitar y hacer zoom con el dedo
+        interactive: true           # arrastrar = girar · pellizcar/rueda = zoom (sin desplazar)
+        # /local/ se cachea 31 días en el navegador: sube el número de ?v= cada vez
+        # que edites house.json para que el navegador (y la tablet) lo vuelvan a bajar.
+        house: /local/casa3d/house.json?v=5
         # lights:                   # id de habitación (house.json) → entidad
         #   sala: light.sala
         # openings:                 # puertas con sensor: on = abierta
         #   puerta_dorm2: binary_sensor.puerta_dormitorio
         markers:
           # Acceso manual a la cámara del timbre (junto a la entrada)
-          - entity: &camara_timbre camera.timbre_puerta   # edita SOLO esta línea
+          - entity: &camara_timbre camera.front_door_front_door_doorbell  # edita SOLO esta línea
             icon: mdi:doorbell-video
             at: [3.2, 21]
+          # Base de Robotina (Dreame): tocar abre sus controles
+          - entity: vacuum.robotina
+            icon: mdi:robot-vacuum
+            at: [10.5, 1.6]         # pies; ajusta x (este) e y (sur) si hace falta
         # Cámara del timbre superpuesta (modo "overlay" de automations/timbre.yaml):
         # visible mientras input_boolean.timbre_overlay = on; tocar la cierra.
         doorbell:
@@ -137,20 +144,12 @@ views:
           - type: heading
             heading: Presencia
             heading_style: subtitle
-          - type: grid
-            columns: 2
-            square: false
-            cards:
-              - type: tile
-                entity: person.yo
-                name: Yo
-                card_mod: *cristal
-              - type: tile
-                entity: person.familiar
-                name: Familia
-                card_mod: *cristal
+          - type: tile
+            entity: person.andres_guanipa
+            name: Yo
+            card_mod: *cristal
 
-          # --- Reciclaje -----------------------------------------------------
+          # --- Hogar ---------------------------------------------------------
           - type: heading
             heading: Hogar
             heading_style: subtitle
@@ -172,17 +171,31 @@ views:
                        else 'rgba(255, 255, 255, 0.08)' }};
                 }
 
-          # --- Multimedia ----------------------------------------------------
-          - type: heading
-            heading: Multimedia
-            heading_style: subtitle
-          - type: media-control
-            entity: media_player.sala
-            card_mod:
-              style: |
-                ha-card {
-                  border-radius: 24px;
-                  overflow: hidden;
-                  border: 1px solid rgba(255, 255, 255, 0.08);
-                  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
-                }
+          # --- Robotina (Dreame) ---------------------------------------------
+          # Integración comunitaria dreame_vacuum (INSTALL_DREAME=1 en bootstrap).
+          - type: tile
+            entity: vacuum.robotina
+            name: Robotina
+            # Al tocar la tarjeta se abre el mapa del robot (ventana emergente).
+            tap_action:
+              action: more-info
+              entity: camera.robotina_map
+            card_mod: *cristal
+            features:
+              - type: vacuum-commands
+                commands:
+                  - start_pause
+                  - return_home
+          - type: grid
+            columns: 2
+            square: false
+            cards:
+              - type: tile
+                entity: sensor.robotina_battery_level
+                name: Batería
+                card_mod: *cristal
+              - type: tile
+                entity: sensor.robotina_cleaned_area
+                name: Última limpieza
+                icon: mdi:vector-square
+                card_mod: *cristal
