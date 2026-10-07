@@ -11,6 +11,7 @@ ha-floorplan/
 ├── CLAUDE.md                     # esta guía
 ├── .gitignore · .yamllint
 ├── scripts/
+│   ├── generate_floorplan.py     # genera el mapa 3D (casa_base.png + capas de luz)
 │   ├── bootstrap.sh              # prepara un clon limpio (tarjetas JS, Browser Mod, plantillas)
 │   └── backup.sh                 # copia del estado que NO está en Git (.storage, BD, secrets)
 ├── packages_available/
@@ -29,7 +30,7 @@ ha-floorplan/
 
 La CI (`.github/workflows/validate.yml`) ejecuta `yamllint` y `check_config` con la imagen oficial en cada push.
 
-Las imágenes incluidas son **marcadores de prueba** (un plano isométrico genérico, con fondo transparente) para que el dashboard funcione desde el primer arranque.
+Las imágenes incluidas son un **modelo isométrico estilizado del Plan 4** (2 habitaciones, 2 baños) generado por `scripts/generate_floorplan.py` (Pillow). Para regenerarlo o ajustar muros, muebles y luces: edita las tablas del script y ejecútalo; imprime las posiciones `top`/`left` de los iconos. Para un acabado realista, sustitúyelo por renders de Sweet Home 3D (sección 6).
 
 ---
 

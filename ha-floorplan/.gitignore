@@ -20,3 +20,4 @@ config/www/community/
 
 # Copias de seguridad generadas por scripts/backup.sh
 backups/
+config/www/floorplan/positions.txt
