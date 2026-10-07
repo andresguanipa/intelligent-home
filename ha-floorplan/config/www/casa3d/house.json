@@ -575,16 +575,6 @@
    ],
    "openings": [
     {
-     "type": "door",
-     "id": "puerta_suite",
-     "hinge": "a",
-     "swing": "n",
-     "at": [
-      0.35,
-      3.02
-     ]
-    },
-    {
      "type": "opening",
      "id": "paso_suite",
      "at": [
@@ -628,6 +618,14 @@
    "openings": [
     {
      "type": "opening",
+     "id": "paso_fau",
+     "at": [
+      0.75,
+      3.35
+     ]
+    },
+    {
+     "type": "opening",
      "id": "paso_bano_suite",
      "at": [
       11.06,
@@ -639,7 +637,7 @@
   {
    "id": "bano2_n",
    "a": [
-    19.42,
+    17.31,
     17.88
    ],
    "b": [
@@ -746,6 +744,52 @@
      "at": [
       0.54,
       3.15
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fau_w",
+   "a": [
+    29.27,
+    16.79
+   ],
+   "b": [
+    29.27,
+    19.52
+   ],
+   "openings": [
+    {
+     "type": "door",
+     "id": "puerta_fau2",
+     "hinge": "a",
+     "swing": "w",
+     "at": [
+      0.1,
+      2.63
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pasillo_div",
+   "a": [
+    32.75,
+    12.5
+   ],
+   "b": [
+    32.75,
+    16.79
+   ],
+   "openings": [
+    {
+     "type": "door",
+     "id": "puerta_pasillo",
+     "hinge": "a",
+     "swing": "e",
+     "at": [
+      0.7,
+      3.4
      ]
     }
    ]
