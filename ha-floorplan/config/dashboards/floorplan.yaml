@@ -16,6 +16,7 @@
 #    person.andres_guanipa        → presencia
 #    sensor.reciclaje             → definido en configuration.yaml
 #    vacuum.robotina / camera.robotina_map → robot Dreame (Hogar)
+#    media_player.spotify_andres_guanipa   → Spotify (Multimedia)
 # =============================================================================
 
 title: Casa 3D
@@ -199,3 +200,20 @@ views:
                 name: Última limpieza
                 icon: mdi:vector-square
                 card_mod: *cristal
+
+          # --- Multimedia (Spotify) -------------------------------------------
+          # Integración oficial Spotify. La música suena en un dispositivo de
+          # Spotify Connect activo (Nest Hub, móvil...); en "Fuente" se elige cuál.
+          - type: heading
+            heading: Multimedia
+            heading_style: subtitle
+          - type: media-control
+            entity: media_player.spotify_andres_guanipa
+            card_mod:
+              style: |
+                ha-card {
+                  border-radius: 24px;
+                  overflow: hidden;
+                  border: 1px solid rgba(255, 255, 255, 0.08);
+                  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+                }
