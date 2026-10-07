@@ -1,0 +1,13 @@
+# Scripts (gestionados desde la UI o a mano).
+# Script de PRUEBA: muestra la cámara del timbre sin que nadie llame.
+# Ejecútalo desde Ajustes > Automatizaciones y escenas > Scripts.
+timbre_prueba_camara:
+  alias: "Timbre · Probar alerta de cámara"
+  icon: mdi:test-tube
+  sequence:
+    - action: automation.trigger
+      target:
+        entity_id: automation.timbre_nest_mostrar_camara_sobre_el_floorplan
+      data:
+        # Salta la condición "¿es un doorbell_chime real?"
+        skip_condition: true
