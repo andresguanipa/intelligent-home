@@ -12,6 +12,7 @@ ha-floorplan/
 ├── .gitignore · .yamllint
 ├── scripts/
 │   ├── bootstrap.sh              # prepara un clon limpio (tarjetas JS, Browser Mod, plantillas)
+│   ├── render-layers.mjs         # genera los PNG del dashboard desde el modelo three.js
 │   └── backup.sh                 # copia del estado que NO está en Git (.storage, BD, secrets)
 ├── packages_available/
 │   └── demo.yaml                 # luces/personas de ejemplo (cópialo a config/packages/ para usarlo)
@@ -24,12 +25,13 @@ ha-floorplan/
     ├── automations.yaml · scripts.yaml · scenes.yaml   # reservados para la UI
     ├── themes/floorplan_dark.yaml
     ├── dashboards/floorplan.yaml # el dashboard 3D (layout-card + picture-elements)
-    └── www/floorplan/            # PNG del mapa (→ /local/floorplan/…)
+    ├── www/casa3d/               # modelo 3D three.js: house.json (plano) + app.js (visor)
+    └── www/floorplan/            # PNG del mapa (→ /local/floorplan/…), generados desde casa3d
 ```
 
 La CI (`.github/workflows/validate.yml`) ejecuta `yamllint` y `check_config` con la imagen oficial en cada push.
 
-Las imágenes incluidas son **marcadores de prueba** (un plano isométrico genérico, con fondo transparente) para que el dashboard funcione desde el primer arranque.
+Las imágenes de `www/floorplan/` se **generan desde el modelo three.js** (`www/casa3d/`), basado en el plano *Jordan Bluffs · Plan 4* (2 hab / 2 baños). Ver §6.
 
 ---
 
@@ -107,7 +109,24 @@ yamllint -c .yamllint .     # opcional, local
 
 ---
 
-## 6. Crear tu propio mapa 3D
+## 6. Modelo 3D con three.js (recomendado)
+
+El modelo se describe en `config/www/casa3d/house.json` (unidades: pies; origen = esquina noroeste del plano; x → este, y → sur): habitaciones, muros, ventanas y muebles. `app.js` lo convierte en una escena three.js con cámara isométrica (suroeste, como los renders de referencia) y una luz por habitación.
+
+**Ver / orbitar el modelo** (tras `./scripts/bootstrap.sh`, que baja three.js a `www/vendor/three/`): `http://<host>:8123/local/casa3d/index.html` · opciones: `?on=sala,cocina` · `?ui=0` · `?cutaway=0`.
+
+**Regenerar los PNG del dashboard** (requiere `npm i -g playwright`; si no encuentra Chromium, `CHROMIUM_PATH=/ruta/chrome`):
+
+```bash
+node scripts/render-layers.mjs
+```
+Escribe `casa_base.png` y `<habitación>_on.png` (1920×1200, misma cámara). Cada capa es la diferencia «luz encendida − base», recortada a su habitación, lista para `mix-blend-mode: screen` (varias luces a la vez). El script imprime el `top`/`left` en % para los iconos de `dashboards/floorplan.yaml`.
+
+**Editar la casa:** cambia medidas, muros o muebles en `house.json` y vuelve a renderizar. Cada habitación con `"light": "light.xxx"` genera su capa; el id de la habitación da el nombre del PNG. Las medidas son una transcripción del plano (~21.6 px/ft): refínalas con las reales.
+
+---
+
+## 7. Alternativa: crear el mapa con otro software
 
 ### Software recomendado
 - **Sweet Home 3D** (gratis, Windows/Mac/Linux) — **el recomendado**. Es el estándar de facto en la comunidad de Home Assistant: dibujas muros desde el plano, colocas muebles, fijas una cámara aérea y renderizas varias versiones con luces encendidas/apagadas desde la *misma* posición de cámara.
@@ -140,7 +159,7 @@ Sobrescribe `casa_base.png`, `sala_on.png`, `cocina_on.png` y `dormitorio_on.png
 
 ---
 
-## 7. Convenciones del proyecto
+## 8. Convenciones del proyecto
 - Entidades de ejemplo en español y en minúsculas (`light.sala`).
 - Estilo cristal compartido con anclas YAML (`&cristal` / `*cristal`) dentro de `floorplan.yaml`.
 - Nada de secretos en Git: usa `config/secrets.yaml` (ignorado) y `!secret`.
