@@ -13,9 +13,9 @@
 #    light.sala / light.cocina / light.dormitorio / light.suite
 #    camera.timbre_puerta         → cámara del Nest Doorbell (ancla &camara_timbre)
 #  El mapa es la tarjeta custom:casa3d-card (modelo three.js, ver CLAUDE.md §6).
-#    person.yo / person.familiar  → presencia
+#    person.andres_guanipa        → presencia
 #    sensor.reciclaje             → definido en configuration.yaml
-#    media_player.sala            → altavoz / TV
+#    vacuum.robotina / camera.robotina_map → robot Dreame (Hogar)
 # =============================================================================
 
 title: Casa 3D
@@ -137,20 +137,12 @@ views:
           - type: heading
             heading: Presencia
             heading_style: subtitle
-          - type: grid
-            columns: 2
-            square: false
-            cards:
-              - type: tile
-                entity: person.andres_guanipa
-                name: Yo
-                card_mod: *cristal
-              - type: tile
-                entity: person.familiar
-                name: Familia
-                card_mod: *cristal
+          - type: tile
+            entity: person.andres_guanipa
+            name: Yo
+            card_mod: *cristal
 
-          # --- Reciclaje -----------------------------------------------------
+          # --- Hogar ---------------------------------------------------------
           - type: heading
             heading: Hogar
             heading_style: subtitle
@@ -172,12 +164,37 @@ views:
                        else 'rgba(255, 255, 255, 0.08)' }};
                 }
 
-          # --- Multimedia ----------------------------------------------------
-          - type: heading
-            heading: Multimedia
-            heading_style: subtitle
-          - type: media-control
-            entity: media_player.sala
+          # --- Robotina (Dreame) ---------------------------------------------
+          # Integración comunitaria dreame_vacuum (INSTALL_DREAME=1 en bootstrap).
+          - type: tile
+            entity: vacuum.robotina
+            name: Robotina
+            card_mod: *cristal
+            features:
+              - type: vacuum-commands
+                commands:
+                  - start_pause
+                  - return_home
+          - type: grid
+            columns: 2
+            square: false
+            cards:
+              - type: tile
+                entity: sensor.robotina_battery_level
+                name: Batería
+                card_mod: *cristal
+              - type: tile
+                entity: sensor.robotina_cleaned_area
+                name: Última limpieza
+                icon: mdi:vector-square
+                card_mod: *cristal
+          - type: picture-entity
+            entity: camera.robotina_map
+            show_name: false
+            show_state: false
+            camera_view: auto
+            tap_action:
+              action: more-info
             card_mod:
               style: |
                 ha-card {
