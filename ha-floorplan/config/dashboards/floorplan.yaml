@@ -207,13 +207,36 @@ views:
           - type: heading
             heading: Multimedia
             heading_style: subtitle
-          - type: media-control
-            entity: media_player.spotify_andres_guanipa
-            card_mod:
-              style: |
-                ha-card {
-                  border-radius: 24px;
-                  overflow: hidden;
-                  border: 1px solid rgba(255, 255, 255, 0.08);
-                  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
-                }
+          # Sonando o en pausa: reproductor completo con carátula.
+          - type: conditional
+            conditions:
+              - condition: state
+                entity: media_player.spotify_andres_guanipa
+                state_not:
+                  - "off"
+                  - idle
+                  - unavailable
+                  - unknown
+            card:
+              type: media-control
+              entity: media_player.spotify_andres_guanipa
+              card_mod: *cristal
+          # Inactivo: tarjeta compacta (abre el detalle y permite elegir fuente).
+          - type: conditional
+            conditions:
+              - condition: state
+                entity: media_player.spotify_andres_guanipa
+                state:
+                  - "off"
+                  - idle
+                  - unavailable
+                  - unknown
+            card:
+              type: tile
+              entity: media_player.spotify_andres_guanipa
+              name: Spotify
+              icon: mdi:spotify
+              color: green
+              tap_action:
+                action: more-info
+              card_mod: *cristal
