@@ -105,7 +105,7 @@ views:
         interactive: true           # arrastrar = girar · pellizcar/rueda = zoom (sin desplazar)
         # /local/ se cachea 31 días en el navegador: sube el número de ?v= cada vez
         # que edites house.json para que el navegador (y la tablet) lo vuelvan a bajar.
-        house: /local/casa3d/house.json?v=4
+        house: /local/casa3d/house.json?v=5
         # lights:                   # id de habitación (house.json) → entidad
         #   sala: light.sala
         # openings:                 # puertas con sensor: on = abierta

@@ -939,51 +939,6 @@
    "top": "#b8b9be"
   },
   {
-   "type": "box",
-   "name": "alfombra",
-   "pos": [
-    1.8,
-    4.6
-   ],
-   "size": [
-    4.8,
-    4.6,
-    0.05
-   ],
-   "color": "#c9b99c",
-   "room": "sala"
-  },
-  {
-   "type": "box",
-   "name": "mesa_centro",
-   "pos": [
-    2.6,
-    5.4
-   ],
-   "size": [
-    2.6,
-    3,
-    1.4
-   ],
-   "color": "#87603f",
-   "room": "sala"
-  },
-  {
-   "type": "box",
-   "name": "sofa",
-   "pos": [
-    0.4,
-    3.2
-   ],
-   "size": [
-    2.8,
-    7.5,
-    2.4
-   ],
-   "color": "#6b7b90",
-   "room": "sala"
-  },
-  {
    "type": "bed",
    "name": "cama_dorm2",
    "pos": [
