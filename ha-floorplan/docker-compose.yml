@@ -4,16 +4,17 @@
 #  Arranque:      docker compose up -d
 #  Logs:          docker compose logs -f homeassistant
 #  Reinicio:      docker compose restart homeassistant
-#  Actualizar:    docker compose pull && docker compose up -d
+#  Actualizar:    cambia HA_VERSION en .env → docker compose pull && docker compose up -d
 #  UI:            http://<IP-del-host>:8123
+#  Variables:     copia .env.example a .env (ver ese archivo)
 # =============================================================================
 
 services:
   homeassistant:
     container_name: homeassistant
-    # Imagen oficial de Home Assistant Core (canal estable).
-    # Para reproducibilidad total, fija una versión: p. ej. :2026.10
-    image: ghcr.io/home-assistant/home-assistant:stable
+    # Versión fijada (reproducible): un "pull" no rompe card-mod/layout-card
+    # por sorpresa. Cámbiala a propósito en .env cuando quieras actualizar.
+    image: ghcr.io/home-assistant/home-assistant:${HA_VERSION:-2026.10}
     restart: unless-stopped
 
     # Red del host: imprescindible para el autodescubrimiento (mDNS/SSDP),
@@ -23,23 +24,22 @@ services:
     network_mode: host
 
     environment:
-      # Zona horaria del contenedor (logs, automatizaciones por hora, etc.)
-      - TZ=America/Denver
+      # Zona horaria del contenedor; configuration.yaml usa la misma
+      # (!env_var TZ) para tener una sola fuente de verdad.
+      - TZ=${TZ:-America/Denver}
 
     volumes:
       # Toda la configuración versionable vive en ./config  →  /config
+      # (incluye www/, que HA sirve en la URL /local/)
       - ./config:/config
-
-      # Recursos estáticos del dashboard (imágenes del floorplan).
-      # Home Assistant sirve /config/www en la URL /local/
-      #   ./config/www/floorplan/casa_base.png  →  /local/floorplan/casa_base.png
-      # Ya está incluido en el montaje anterior; se declara explícitamente
-      # para dejar claro el contrato carpeta ↔ URL y poder moverlo a otro
-      # disco en el futuro sin tocar el resto de la configuración.
-      - ./config/www:/config/www
-
       # Sincroniza el reloj con el host (solo en hosts Linux).
       - /etc/localtime:/etc/localtime:ro
-
       # Opcional (Linux): necesario para la integración Bluetooth.
       # - /run/dbus:/run/dbus:ro
+
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "-o", "/dev/null", "http://localhost:8123/manifest.json"]
+      interval: 60s
+      timeout: 10s
+      retries: 5
+      start_period: 120s

@@ -1,0 +1,32 @@
+name: Validar configuración de Home Assistant
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  yamllint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: pip install yamllint
+      - name: yamllint
+        working-directory: ha-floorplan
+        run: yamllint -c .yamllint -f github .
+
+  check-config:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Preparar copia de trabajo (secretos, demo y recursos ficticios)
+        working-directory: ha-floorplan
+        run: |
+          cp config/secrets.yaml.example config/secrets.yaml
+          cp packages_available/demo.yaml config/packages/demo.yaml
+      - name: check_config con la imagen oficial
+        working-directory: ha-floorplan
+        run: |
+          set -a; . ./.env.example; set +a
+          docker run --rm -e TZ -v "$PWD/config:/config" \
+            "ghcr.io/home-assistant/home-assistant:${HA_VERSION}" \
+            python -m homeassistant --script check_config -c /config

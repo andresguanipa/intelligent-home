@@ -7,9 +7,9 @@
 default_config:
 
 homeassistant:
-  # Zona horaria del núcleo (coincide con TZ del docker-compose).
-  # Al declararla aquí, el campo queda bloqueado en la UI → fuente única: Git.
-  time_zone: America/Denver
+  # Zona horaria del núcleo: se lee de la variable TZ del docker-compose
+  # (que viene de .env) → una sola fuente de verdad. Por defecto, Denver.
+  time_zone: !env_var TZ America/Denver
   # Permite organizar configuración por "paquetes" en config/packages/
   # (útil cuando el proyecto crezca: un archivo por habitación o sistema).
   packages: !include_dir_named packages
@@ -20,18 +20,21 @@ homeassistant:
 frontend:
   # Carga todos los temas de config/themes/ (ver floorplan_dark.yaml).
   themes: !include_dir_merge_named themes
-  # RECOMENDADO tras instalar card-mod desde HACS: cargarlo como módulo
-  # global hace que los estilos se apliquen antes y sin parpadeo.
-  # Descomenta DESPUÉS de instalar card-mod (si no, el frontend dará error 404):
-  # extra_module_url:
-  #   - /hacsfiles/lovelace-card-mod/card-mod.js
+  # Tarjetas personalizadas cargadas como módulos globales, de forma
+  # DECLARATIVA (no dependen de recursos guardados en .storage ni de HACS).
+  # scripts/bootstrap.sh descarga estos archivos a config/www/vendor/.
+  # Si aún no ejecutaste el script, la consola del navegador mostrará 404.
+  extra_module_url:
+    - /local/vendor/card-mod.js
+    - /local/vendor/layout-card.js
+    - /local/vendor/kiosk-mode.js
 
 # -----------------------------------------------------------------------------
 #  Dashboards en modo YAML
 # -----------------------------------------------------------------------------
-#  El dashboard principal ("Resumen") sigue en modo almacenamiento (UI), de
-#  modo que HACS pueda registrar automáticamente los recursos JS de las
-#  tarjetas personalizadas. El floorplan se define 100 % en YAML:
+#  El dashboard principal ("Resumen") sigue en modo almacenamiento (UI). Las
+#  tarjetas personalizadas se cargan con frontend.extra_module_url (arriba),
+#  así que no hace falta registrar recursos. El floorplan se define 100 % en YAML:
 #  cualquier cambio en dashboards/floorplan.yaml se ve con solo recargar
 #  el navegador (no hace falta reiniciar Home Assistant).
 lovelace:
@@ -46,53 +49,28 @@ lovelace:
       require_admin: false
 
 # -----------------------------------------------------------------------------
-#  Helpers que usa el dashboard / automatización del timbre
+#  Servidor HTTP
 # -----------------------------------------------------------------------------
-input_boolean:
-  # Lo enciende la automatización del timbre → muestra la cámara superpuesta
-  # sobre el mapa 3D (modo "overlay"). Se apaga solo tras 60 s o al tocarla.
-  timbre_overlay:
-    name: Timbre · cámara superpuesta en el mapa
-    icon: mdi:doorbell-video
-
-input_select:
-  # Cómo quieres ver la cámara cuando pulsan el timbre:
-  #  - popup:   ventana modal de Browser Mod sobre todo el dashboard (recomendado)
-  #  - overlay: vídeo incrustado dentro del propio mapa 3D (no necesita Browser Mod)
-  timbre_modo_alerta:
-    name: Timbre · modo de alerta
-    icon: mdi:application-outline
-    options:
-      - popup
-      - overlay
-    initial: popup
+#  Sin proxy inverso no hace falta nada más. Si pones HA detrás de Nginx,
+#  Traefik o Caddy, descomenta (y define proxy_ip en secrets.yaml):
+# http:
+#   use_x_forwarded_for: true
+#   trusted_proxies:
+#     - !secret proxy_ip
+#  Bloquea IPs tras 5 intentos de login fallidos (crea ip_bans.yaml).
+http:
+  ip_ban_enabled: true
+  login_attempts_threshold: 5
 
 # -----------------------------------------------------------------------------
-#  Sensores de plantilla
+#  Helpers, sensores y la automatización del timbre viven en packages/:
+#    packages/timbre.yaml     → helpers + automatización + script de prueba
+#    packages/reciclaje.yaml  → día de recogida configurable + sensor
+#  (para datos de ejemplo sin dispositivos: packages_available/demo.yaml)
 # -----------------------------------------------------------------------------
-template:
-  - sensor:
-      # Calendario de reciclaje sin dependencias externas: recogida cada
-      # MIÉRCOLES. Cambia "dia_recogida" (0 = lunes … 6 = domingo).
-      # Si usas la integración HACS "Waste Collection Schedule", sustituye
-      # este sensor en el dashboard por el que te cree esa integración.
-      - name: Reciclaje
-        unique_id: sensor_reciclaje_proxima_recogida
-        icon: mdi:recycle
-        state: >
-          {% set dia_recogida = 2 %}
-          {% set dias = (dia_recogida - now().weekday()) % 7 %}
-          {% if dias == 0 %}Hoy
-          {% elif dias == 1 %}Mañana
-          {% else %}En {{ dias }} días{% endif %}
-        attributes:
-          dias_restantes: >
-            {{ (2 - now().weekday()) % 7 }}
-          fecha: >
-            {{ (now() + timedelta(days=(2 - now().weekday()) % 7)).strftime('%d/%m') }}
 
 # -----------------------------------------------------------------------------
-#  Archivos incluidos (gestionados también desde la UI)
+#  Archivos incluidos (vacíos: reservados para lo que crees desde la UI)
 # -----------------------------------------------------------------------------
 automation: !include automations.yaml
 script: !include scripts.yaml

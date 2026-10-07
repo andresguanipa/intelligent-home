@@ -1,0 +1,133 @@
+# =============================================================================
+#  packages/timbre.yaml · Timbre Nest → vídeo en vivo sobre el floorplan 3D
+# -----------------------------------------------------------------------------
+#  Vive en un package (no en automations.yaml) para que los comentarios
+#  sobrevivan: la UI de HA solo reescribe automations.yaml / scripts.yaml.
+#
+#  Cómo detecta la pulsación:
+#    La integración oficial "Google Nest" expone el timbre como una entidad
+#    EVENT (p. ej. event.timbre_puerta_chime). Cada pulsación cambia su estado
+#    y fija event_type: doorbell_chime. Comprueba el nombre real en
+#    Herramientas para desarrolladores > Estados (filtra "event.").
+#
+#  Cambiar de cámara/evento/tablet: edita SOLO el bloque "variables" de la
+#  automatización y el trigger (y las 3 referencias a la cámara en
+#  dashboards/floorplan.yaml, que usan un ancla YAML: basta editar la primera).
+# =============================================================================
+
+input_boolean:
+  # Lo enciende la automatización → muestra la cámara sobre el mapa 3D
+  # (modo "overlay"). Se apaga solo tras 60 s o al tocarla.
+  timbre_overlay:
+    name: Timbre · cámara superpuesta en el mapa
+    icon: mdi:doorbell-video
+
+input_select:
+  # Cómo quieres ver la cámara cuando pulsan el timbre:
+  #  - popup:   ventana modal de Browser Mod sobre todo el dashboard
+  #  - overlay: vídeo incrustado dentro del mapa 3D (no necesita Browser Mod)
+  timbre_modo_alerta:
+    name: Timbre · modo de alerta
+    icon: mdi:application-outline
+    options:
+      - popup
+      - overlay
+    initial: popup
+
+automation:
+  - id: timbre_nest_mostrar_camara
+    alias: "Timbre Nest · Mostrar cámara sobre el floorplan"
+    description: >
+      Al pulsar el Nest Doorbell, superpone el vídeo en vivo sobre el mapa 3D
+      (popup de Browser Mod o capa dentro del picture-elements) durante 60 s.
+    # restart: si llaman otra vez, el contador de 60 s se reinicia
+    mode: restart
+
+    variables:
+      camara: camera.timbre_puerta
+      tablet: tablet_salon       # Browser ID registrado en Browser Mod (CLAUDE.md §4.3)
+      segundos: 60
+
+    triggers:
+      - trigger: state
+        entity_id: event.timbre_puerta_chime
+        # Ignora el cambio al arrancar HA o al reconectar la integración
+        not_from:
+          - unavailable
+          - unknown
+
+    conditions:
+      # Solo pulsaciones reales del timbre (no movimiento / persona / etc.)
+      - condition: template
+        value_template: >
+          {{ trigger.to_state.attributes.event_type == 'doorbell_chime' }}
+
+    actions:
+      - choose:
+          # ------------- MODO POPUP (Browser Mod) ----------------------------
+          - conditions:
+              - condition: state
+                entity_id: input_select.timbre_modo_alerta
+                state: popup
+            sequence:
+              - action: browser_mod.popup
+                data:
+                  # Quita browser_id para mostrarlo en TODOS los navegadores.
+                  browser_id:
+                    - "{{ tablet }}"
+                  title: "🔔 Alguien llama a la puerta"
+                  size: wide            # normal | wide | fullscreen
+                  dismissable: true
+                  timeout: "{{ segundos * 1000 }}"   # ms
+                  content:
+                    type: picture-entity
+                    entity: "{{ camara }}"
+                    camera_view: live   # streaming WebRTC en vivo del Nest
+                    show_name: false
+                    show_state: false
+                    tap_action:
+                      action: none
+                    card_mod:
+                      style: |
+                        ha-card {
+                          border-radius: 18px;
+                          overflow: hidden;
+                          border: 2px solid #ffc45c;
+                          box-shadow: 0 0 40px rgba(255, 196, 92, 0.45);
+                        }
+          # ------------- MODO OVERLAY (dentro del mapa) ----------------------
+          - conditions:
+              - condition: state
+                entity_id: input_select.timbre_modo_alerta
+                state: overlay
+            sequence:
+              - action: input_boolean.turn_on
+                target:
+                  entity_id: input_boolean.timbre_overlay
+
+      # Opcional: despierta la tablet (Browser Mod). Con Fully Kiosk Browser,
+      # usa button.<tablet>_screen_on.
+      # - action: browser_mod.navigate
+      #   data:
+      #     browser_id: ["{{ tablet }}"]
+      #     path: /casa-3d/planta
+
+      - delay:
+          seconds: "{{ segundos }}"
+      - action: input_boolean.turn_off
+        target:
+          entity_id: input_boolean.timbre_overlay
+
+script:
+  # Script de PRUEBA: muestra la cámara sin que nadie llame.
+  # Ajustes > Automatizaciones y escenas > Scripts > "Timbre · Probar alerta".
+  timbre_prueba_camara:
+    alias: "Timbre · Probar alerta de cámara"
+    icon: mdi:test-tube
+    sequence:
+      - action: automation.trigger
+        target:
+          entity_id: automation.timbre_nest_mostrar_camara_sobre_el_floorplan
+        data:
+          # Salta la condición "¿es un doorbell_chime real?"
+          skip_condition: true
