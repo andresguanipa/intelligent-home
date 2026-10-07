@@ -6,6 +6,7 @@
 #  - Descarga las tarjetas JS (layout-card, card-mod, kiosk-mode) a
 #    config/www/vendor/. Se cargan por frontend.extra_module_url en
 #    configuration.yaml, así NO dependen de recursos guardados en .storage.
+#  - Descarga three.js (visor casa3d) a config/www/vendor/three/.
 #  - Descarga la integración Browser Mod a config/custom_components/.
 #  - Opcional: INSTALL_HACS=1 instala también HACS (necesita el contenedor activo).
 #
@@ -22,6 +23,7 @@ LAYOUT_CARD_VERSION="${LAYOUT_CARD_VERSION:-latest}"
 CARD_MOD_VERSION="${CARD_MOD_VERSION:-latest}"
 KIOSK_MODE_VERSION="${KIOSK_MODE_VERSION:-latest}"
 BROWSER_MOD_VERSION="${BROWSER_MOD_VERSION:-latest}"
+THREE_VERSION="${THREE_VERSION:-0.170.0}"   # visor casa3d (necesita OrbitControls: fija la versión)
 
 # url_release <owner/repo> <versión> <archivo>
 url_release() {
@@ -46,6 +48,15 @@ mkdir -p "$VENDOR"
 fetch "$(url_release thomasloven/lovelace-layout-card "$LAYOUT_CARD_VERSION" layout-card.js)" "$VENDOR/layout-card.js"
 fetch "$(url_release thomasloven/lovelace-card-mod "$CARD_MOD_VERSION" card-mod.js)" "$VENDOR/card-mod.js"
 fetch "$(url_release NemesisRE/kiosk-mode "$KIOSK_MODE_VERSION" kiosk-mode.js)" "$VENDOR/kiosk-mode.js"
+
+echo "→ three.js $THREE_VERSION → config/www/vendor/three/"
+TMP3="$(mktemp -d)"
+fetch "https://registry.npmjs.org/three/-/three-$THREE_VERSION.tgz" "$TMP3/three.tgz"
+tar -xzf "$TMP3/three.tgz" -C "$TMP3" package/build/three.module.js package/examples/jsm/controls/OrbitControls.js
+mkdir -p "$VENDOR/three/addons/controls"
+cp "$TMP3/package/build/three.module.js" "$VENDOR/three/three.module.js"
+cp "$TMP3/package/examples/jsm/controls/OrbitControls.js" "$VENDOR/three/addons/controls/OrbitControls.js"
+rm -rf "$TMP3"
 
 echo "→ Browser Mod → config/custom_components/browser_mod"
 TMP="$(mktemp -d)"; trap 'rm -rf "$TMP"' EXIT

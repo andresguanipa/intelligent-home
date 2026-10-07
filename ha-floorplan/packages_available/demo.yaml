@@ -3,7 +3,7 @@
 # -----------------------------------------------------------------------------
 #  Activar:     cp packages_available/demo.yaml config/packages/demo.yaml  (y reiniciar)
 #  Desactivar:  borra config/packages/demo.yaml
-#  Crea light.sala / light.cocina / light.dormitorio (luces virtuales) y
+#  Crea light.sala / light.cocina / light.dormitorio / light.suite (luces virtuales) y
 #  person.yo / person.familiar, que el dashboard espera. No cubre
 #  weather.*, media_player.sala ni la cámara/evento Nest: esas salen de
 #  integraciones reales (Met.no ya viene con el asistente inicial).
@@ -17,6 +17,8 @@ input_boolean:
     name: Demo · luz cocina
   demo_luz_dormitorio:
     name: Demo · luz dormitorio
+  demo_luz_suite:
+    name: Demo · luz suite
 
 template:
   - light:
@@ -47,6 +49,15 @@ template:
         turn_off:
           action: input_boolean.turn_off
           target: {entity_id: input_boolean.demo_luz_dormitorio}
+      - name: Suite
+        unique_id: demo_light_suite
+        state: "{{ is_state('input_boolean.demo_luz_suite', 'on') }}"
+        turn_on:
+          action: input_boolean.turn_on
+          target: {entity_id: input_boolean.demo_luz_suite}
+        turn_off:
+          action: input_boolean.turn_off
+          target: {entity_id: input_boolean.demo_luz_suite}
 
 person:
   - name: Yo

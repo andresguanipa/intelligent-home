@@ -10,7 +10,7 @@
 #  ENTIDADES DE EJEMPLO — sustitúyelas por las tuyas (Herramientas para
 #  desarrolladores > Estados):
 #    weather.forecast_home        → clima (Met.no, viene por defecto)
-#    light.sala / light.cocina / light.dormitorio
+#    light.sala / light.cocina / light.dormitorio / light.suite
 #    camera.timbre_puerta         → cámara del Nest Doorbell (ancla &camara_timbre)
 #    person.yo / person.familiar  → presencia
 #    sensor.reciclaje             → definido en configuration.yaml
@@ -175,11 +175,24 @@ views:
               action: none
             style: *capa_luz
 
+          # 4) Luz de la SUITE
+          - type: image
+            entity: light.suite
+            image: /local/floorplan/transparente.png
+            state_image:
+              "on": /local/floorplan/suite_on.png
+              "off": /local/floorplan/transparente.png
+            tap_action:
+              action: none
+            hold_action:
+              action: none
+            style: *capa_luz
+
           # -------------------------------------------------------------------
           #  ZONAS TÁCTILES (iconos sobre cada habitación)
           #  Toque = encender/apagar · Mantener = más info (brillo, color)
-          #  Coordenadas en % calculadas para la imagen de prueba; ajústalas
-          #  a tu render (centro de cada habitación).
+          #  Coordenadas en % impresas por scripts/render-layers.mjs al
+          #  regenerar los PNG desde el modelo three.js (config/www/casa3d).
           # -------------------------------------------------------------------
           - type: state-icon
             entity: light.sala
@@ -188,8 +201,8 @@ views:
             hold_action:
               action: more-info
             style:
-              top: 41%
-              left: 54%
+              top: 70.7%
+              left: 22.9%
               "--mdc-icon-size": 34px
 
           - type: state-icon
@@ -199,8 +212,8 @@ views:
             hold_action:
               action: more-info
             style:
-              top: 64%
-              left: 79%
+              top: 54.6%
+              left: 33.4%
               "--mdc-icon-size": 34px
 
           - type: state-icon
@@ -210,8 +223,19 @@ views:
             hold_action:
               action: more-info
             style:
-              top: 57%
-              left: 31%
+              top: 42.8%
+              left: 48.6%
+              "--mdc-icon-size": 34px
+
+          - type: state-icon
+            entity: light.suite
+            tap_action:
+              action: toggle
+            hold_action:
+              action: more-info
+            style:
+              top: 32.6%
+              left: 67%
               "--mdc-icon-size": 34px
 
           # Acceso manual a la cámara del timbre (junto a la entrada)
@@ -222,8 +246,8 @@ views:
               # &camara_timbre: edita SOLO esta línea; las demás usan *camara_timbre
               entity: &camara_timbre camera.timbre_puerta
             style:
-              top: 82%
-              left: 70%
+              top: 80%
+              left: 26%
               color: "#9aa3b8"
               "--mdc-icon-size": 30px
 
