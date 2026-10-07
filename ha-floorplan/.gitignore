@@ -20,3 +20,9 @@ config/www/community/
 
 # Copias de seguridad generadas por scripts/backup.sh
 backups/
+docker-compose.override.yml
+
+# Generado por HA en ejecucion
+config/.cache/
+config/.ha_run.lock
+config/blueprints/

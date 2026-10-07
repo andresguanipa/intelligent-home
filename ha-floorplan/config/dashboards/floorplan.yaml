@@ -109,7 +109,7 @@ views:
         #   puerta_dorm2: binary_sensor.puerta_dormitorio
         markers:
           # Acceso manual a la cámara del timbre (junto a la entrada)
-          - entity: &camara_timbre camera.timbre_puerta   # edita SOLO esta línea
+          - entity: &camara_timbre camera.front_door_front_door_doorbell  # edita SOLO esta línea
             icon: mdi:doorbell-video
             at: [3.2, 21]
         # Cámara del timbre superpuesta (modo "overlay" de automations/timbre.yaml):
