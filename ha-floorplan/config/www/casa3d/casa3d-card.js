@@ -238,8 +238,14 @@ class Casa3DCard extends HTMLElement {
       const ov = this.shadowRoot.getElementById("overlay");
       if (ov.classList.contains("show") !== show) {
         ov.classList.toggle("show", show);
-        if (show) this._mountCamera(db);
-        else ov.querySelector(".box").replaceChildren();
+        if (show) {
+          this._mountCamera(db);
+          // al sonar el timbre, el plano se expande para ver quién está fuera
+          if (!this._expanded) { this._autoExp = true; this._toggleExpand(true); }
+        } else {
+          ov.querySelector(".box").replaceChildren();
+          if (this._autoExp) { this._autoExp = false; this._toggleExpand(false); }
+        }
       }
       ov.onclick = () => hass.callService("input_boolean", "turn_off", { entity_id: db.overlay });
       const cam = ov.querySelector(".box > *");
