@@ -1162,6 +1162,22 @@
    "color": "#d8cdb8",
    "room": "vestidor",
    "elev": 5.5
+  },
+  {
+   "type": "box",
+   "name": "tv_sala",
+   "pos": [
+    0.33,
+    4.75
+   ],
+   "size": [
+    0.18,
+    4.0,
+    2.3
+   ],
+   "color": "#0d0e12",
+   "room": "sala",
+   "elev": 2.4
   }
  ]
 }

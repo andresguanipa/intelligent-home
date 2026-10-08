@@ -32,7 +32,8 @@ input_select:
     options:
       - popup
       - overlay
-    initial: popup
+    # overlay no necesita Browser Mod; cambia a popup cuando lo tengas instalado y registrado
+    initial: overlay
 
 automation:
   - id: timbre_nest_mostrar_camara
@@ -57,10 +58,12 @@ automation:
           - unknown
 
     conditions:
-      # Solo pulsaciones reales del timbre (no movimiento / persona / etc.)
+      # Solo pulsaciones reales del timbre (no movimiento / persona / etc.).
+      # El Nest Doorbell actual manda event_type "ring"; "doorbell_chime" es el
+      # nombre antiguo de la API y se deja por compatibilidad.
       - condition: template
         value_template: >
-          {{ trigger.to_state.attributes.event_type == 'doorbell_chime' }}
+          {{ trigger.to_state.attributes.event_type in ['ring', 'doorbell_chime'] }}
 
     actions:
       - choose:

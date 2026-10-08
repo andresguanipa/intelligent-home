@@ -1,0 +1,106 @@
+# =============================================================================
+#  packages/luces_virtuales.yaml · luces VIRTUALES para los botones del mapa 3D
+# -----------------------------------------------------------------------------
+#  No controlan ningún aparato: cada una es un interruptor (input_boolean) con
+#  forma de luz, para que el botón del plano funcione y se vea encendido/apagado.
+#  Cuando tengas la bombilla/interruptor real de una zona:
+#    1) cambia su entidad en dashboards/floorplan.yaml (clave "markers")
+#    2) borra aquí su input_boolean y su light.
+#  Posiciones en house.json (pies; x = este, y = sur) y marcadores: ver el dashboard.
+# =============================================================================
+
+input_boolean:
+  luz_sala_oeste:
+    name: Luz virtual · Sala oeste
+    icon: mdi:lightbulb-outline
+  luz_sala_sur:
+    name: Luz virtual · Sala sur
+    icon: mdi:lightbulb-outline
+  luz_pasillo_centro:
+    name: Luz virtual · Pasillo centro
+    icon: mdi:lightbulb-outline
+  luz_pasillo_este:
+    name: Luz virtual · Pasillo este
+    icon: mdi:lightbulb-outline
+  luz_fau:
+    name: Luz virtual · FAU
+    icon: mdi:lightbulb-outline
+  luz_wc_suite:
+    name: Luz virtual · WC suite
+    icon: mdi:lightbulb-outline
+  luz_bano_suite:
+    name: Luz virtual · Baño suite
+    icon: mdi:lightbulb-outline
+
+template:
+  - light:
+      - name: Sala oeste
+        unique_id: virtual_light_sala_oeste
+        icon: mdi:lightbulb
+        state: "{{ is_state('input_boolean.luz_sala_oeste', 'on') }}"
+        turn_on:
+          action: input_boolean.turn_on
+          target: {entity_id: input_boolean.luz_sala_oeste}
+        turn_off:
+          action: input_boolean.turn_off
+          target: {entity_id: input_boolean.luz_sala_oeste}
+      - name: Sala sur
+        unique_id: virtual_light_sala_sur
+        icon: mdi:lightbulb
+        state: "{{ is_state('input_boolean.luz_sala_sur', 'on') }}"
+        turn_on:
+          action: input_boolean.turn_on
+          target: {entity_id: input_boolean.luz_sala_sur}
+        turn_off:
+          action: input_boolean.turn_off
+          target: {entity_id: input_boolean.luz_sala_sur}
+      - name: Pasillo centro
+        unique_id: virtual_light_pasillo_centro
+        icon: mdi:lightbulb
+        state: "{{ is_state('input_boolean.luz_pasillo_centro', 'on') }}"
+        turn_on:
+          action: input_boolean.turn_on
+          target: {entity_id: input_boolean.luz_pasillo_centro}
+        turn_off:
+          action: input_boolean.turn_off
+          target: {entity_id: input_boolean.luz_pasillo_centro}
+      - name: Pasillo este
+        unique_id: virtual_light_pasillo_este
+        icon: mdi:lightbulb
+        state: "{{ is_state('input_boolean.luz_pasillo_este', 'on') }}"
+        turn_on:
+          action: input_boolean.turn_on
+          target: {entity_id: input_boolean.luz_pasillo_este}
+        turn_off:
+          action: input_boolean.turn_off
+          target: {entity_id: input_boolean.luz_pasillo_este}
+      - name: FAU
+        unique_id: virtual_light_fau
+        icon: mdi:lightbulb
+        state: "{{ is_state('input_boolean.luz_fau', 'on') }}"
+        turn_on:
+          action: input_boolean.turn_on
+          target: {entity_id: input_boolean.luz_fau}
+        turn_off:
+          action: input_boolean.turn_off
+          target: {entity_id: input_boolean.luz_fau}
+      - name: WC suite
+        unique_id: virtual_light_wc_suite
+        icon: mdi:lightbulb
+        state: "{{ is_state('input_boolean.luz_wc_suite', 'on') }}"
+        turn_on:
+          action: input_boolean.turn_on
+          target: {entity_id: input_boolean.luz_wc_suite}
+        turn_off:
+          action: input_boolean.turn_off
+          target: {entity_id: input_boolean.luz_wc_suite}
+      - name: Baño suite
+        unique_id: virtual_light_bano_suite
+        icon: mdi:lightbulb
+        state: "{{ is_state('input_boolean.luz_bano_suite', 'on') }}"
+        turn_on:
+          action: input_boolean.turn_on
+          target: {entity_id: input_boolean.luz_bano_suite}
+        turn_off:
+          action: input_boolean.turn_off
+          target: {entity_id: input_boolean.luz_bano_suite}

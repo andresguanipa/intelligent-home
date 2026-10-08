@@ -397,6 +397,7 @@ export async function createHouse3D(container, opts = {}) {
   return {
     house, rooms: house.rooms, lights, doors, setLight, setOpening: (id, open) => doors.get(id)?.set(open),
     addMarker, project, renderLayer, renderBase, resize, dispose,
+    setInteractive: (on) => { controls.enabled = !!on && !fixedSize; },
     get roomIds() { return [...lights.keys()]; },
   };
 }
