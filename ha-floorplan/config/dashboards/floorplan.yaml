@@ -293,6 +293,13 @@ views:
                   title: Fire TV · Mando
                   size: normal
                   dismissable: true
+                  # Browser Mod: el ancho "normal" sale de --popup-min-width (580 px por defecto)
+                  card_mod:
+                    style: |
+                      :host {
+                        --popup-min-width: 360px;
+                        --popup-max-width: 360px;
+                      }
                   content:
                     type: vertical-stack
                     cards:
@@ -327,7 +334,7 @@ views:
                                   -webkit-backdrop-filter: blur(16px) saturate(140%);
                                   border: 1px solid rgba(255, 255, 255, 0.08);
                                   border-radius: 22px;
-                                  height: 70px;
+                                  height: 76px;
                                   display: flex; align-items: center; justify-content: center;
                                 }
                           - type: button
