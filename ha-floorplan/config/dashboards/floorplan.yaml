@@ -311,8 +311,242 @@ views:
               name: Fire TV
               icon: mdi:television
               tap_action:
-                action: navigate
-                navigation_path: /casa-3d/mando
+                action: fire-dom-event
+                browser_mod: &mando_popup
+                  service: browser_mod.popup
+                  data:
+                    title: Fire TV · Mando
+                    size: normal
+                    dismissable: true
+                    content:
+                      type: vertical-stack
+                      cards:
+                        - type: grid
+                          columns: 3
+                          square: false
+                          cards:
+                            - type: button
+                              show_icon: false
+                              show_name: false
+                              tap_action:
+                                action: none
+                              card_mod:
+                                style: |
+                                  ha-card { background: none; box-shadow: none; border: none; backdrop-filter: none; }
+                            - type: button
+                              icon: mdi:chevron-up
+                              show_name: false
+                              icon_height: 32px
+                              tap_action:
+                                action: perform-action
+                                perform_action: remote.send_command
+                                target:
+                                  entity_id: remote.living_room_fire_tv_living_room
+                                data:
+                                  command: UP
+                              card_mod: &boton_mando
+                                style: |
+                                  ha-card {
+                                    background: rgba(20, 24, 36, 0.55);
+                                    backdrop-filter: blur(16px) saturate(140%);
+                                    -webkit-backdrop-filter: blur(16px) saturate(140%);
+                                    border: 1px solid rgba(255, 255, 255, 0.08);
+                                    border-radius: 22px;
+                                    height: 70px;
+                                    display: flex; align-items: center; justify-content: center;
+                                  }
+                            - type: button
+                              show_icon: false
+                              show_name: false
+                              tap_action:
+                                action: none
+                              card_mod:
+                                style: |
+                                  ha-card { background: none; box-shadow: none; border: none; backdrop-filter: none; }
+                            - type: button
+                              icon: mdi:chevron-left
+                              show_name: false
+                              icon_height: 32px
+                              tap_action:
+                                action: perform-action
+                                perform_action: remote.send_command
+                                target:
+                                  entity_id: remote.living_room_fire_tv_living_room
+                                data:
+                                  command: LEFT
+                              card_mod: *boton_mando
+                            - type: button
+                              icon: mdi:circle-medium
+                              show_name: false
+                              icon_height: 32px
+                              tap_action:
+                                action: perform-action
+                                perform_action: remote.send_command
+                                target:
+                                  entity_id: remote.living_room_fire_tv_living_room
+                                data:
+                                  command: CENTER
+                              card_mod: *boton_mando
+                            - type: button
+                              icon: mdi:chevron-right
+                              show_name: false
+                              icon_height: 32px
+                              tap_action:
+                                action: perform-action
+                                perform_action: remote.send_command
+                                target:
+                                  entity_id: remote.living_room_fire_tv_living_room
+                                data:
+                                  command: RIGHT
+                              card_mod: *boton_mando
+                            - type: button
+                              show_icon: false
+                              show_name: false
+                              tap_action:
+                                action: none
+                              card_mod:
+                                style: |
+                                  ha-card { background: none; box-shadow: none; border: none; backdrop-filter: none; }
+                            - type: button
+                              icon: mdi:chevron-down
+                              show_name: false
+                              icon_height: 32px
+                              tap_action:
+                                action: perform-action
+                                perform_action: remote.send_command
+                                target:
+                                  entity_id: remote.living_room_fire_tv_living_room
+                                data:
+                                  command: DOWN
+                              card_mod: *boton_mando
+                            - type: button
+                              show_icon: false
+                              show_name: false
+                              tap_action:
+                                action: none
+                              card_mod:
+                                style: |
+                                  ha-card { background: none; box-shadow: none; border: none; backdrop-filter: none; }
+                        - type: grid
+                          columns: 3
+                          square: false
+                          cards:
+                            - type: button
+                              icon: mdi:arrow-left
+                              show_name: false
+                              icon_height: 32px
+                              tap_action:
+                                action: perform-action
+                                perform_action: remote.send_command
+                                target:
+                                  entity_id: remote.living_room_fire_tv_living_room
+                                data:
+                                  command: BACK
+                              card_mod: *boton_mando
+                            - type: button
+                              icon: mdi:home
+                              show_name: false
+                              icon_height: 32px
+                              tap_action:
+                                action: perform-action
+                                perform_action: remote.send_command
+                                target:
+                                  entity_id: remote.living_room_fire_tv_living_room
+                                data:
+                                  command: HOME
+                              card_mod: *boton_mando
+                            - type: button
+                              icon: mdi:menu
+                              show_name: false
+                              icon_height: 32px
+                              tap_action:
+                                action: perform-action
+                                perform_action: remote.send_command
+                                target:
+                                  entity_id: remote.living_room_fire_tv_living_room
+                                data:
+                                  command: MENU
+                              card_mod: *boton_mando
+                        - type: grid
+                          columns: 3
+                          square: false
+                          cards:
+                            - type: button
+                              icon: mdi:rewind
+                              show_name: false
+                              icon_height: 32px
+                              tap_action:
+                                action: perform-action
+                                perform_action: remote.send_command
+                                target:
+                                  entity_id: remote.living_room_fire_tv_living_room
+                                data:
+                                  command: REWIND
+                              card_mod: *boton_mando
+                            - type: button
+                              icon: mdi:play-pause
+                              show_name: false
+                              icon_height: 32px
+                              tap_action:
+                                action: perform-action
+                                perform_action: remote.send_command
+                                target:
+                                  entity_id: remote.living_room_fire_tv_living_room
+                                data:
+                                  command: "input keyevent 85"
+                              card_mod: *boton_mando
+                            - type: button
+                              icon: mdi:fast-forward
+                              show_name: false
+                              icon_height: 32px
+                              tap_action:
+                                action: perform-action
+                                perform_action: remote.send_command
+                                target:
+                                  entity_id: remote.living_room_fire_tv_living_room
+                                data:
+                                  command: FAST_FORWARD
+                              card_mod: *boton_mando
+                        - type: grid
+                          columns: 3
+                          square: false
+                          cards:
+                            - type: button
+                              icon: mdi:volume-minus
+                              show_name: false
+                              icon_height: 32px
+                              tap_action:
+                                action: perform-action
+                                perform_action: remote.send_command
+                                target:
+                                  entity_id: remote.living_room_75_philips_roku_tv
+                                data:
+                                  command: volume_down
+                              card_mod: *boton_mando
+                            - type: button
+                              icon: mdi:volume-mute
+                              show_name: false
+                              icon_height: 32px
+                              tap_action:
+                                action: perform-action
+                                perform_action: remote.send_command
+                                target:
+                                  entity_id: remote.living_room_75_philips_roku_tv
+                                data:
+                                  command: volume_mute
+                              card_mod: *boton_mando
+                            - type: button
+                              icon: mdi:volume-plus
+                              show_name: false
+                              icon_height: 32px
+                              tap_action:
+                                action: perform-action
+                                perform_action: remote.send_command
+                                target:
+                                  entity_id: remote.living_room_75_philips_roku_tv
+                                data:
+                                  command: volume_up
+                              card_mod: *boton_mando
               card_mod: *cristal
           # Botones de apps del Fire TV. El botón "Source" de HA solo lista las apps que
           # están en ejecución, así que se lanzan por nombre (los de Ajustes > Android Debug
@@ -360,8 +594,8 @@ views:
                 icon: mdi:remote
                 hide_state: true
                 tap_action:
-                  action: navigate
-                  navigation_path: /casa-3d/mando
+                  action: fire-dom-event
+                  browser_mod: *mando_popup
                 card_mod: *cristal
           # Botones de encendido/apagado completos de la tele (Roku TV + Fire TV).
           - type: grid
@@ -390,277 +624,3 @@ views:
                   target:
                     entity_id: script.tele_encender
                 card_mod: *cristal
-
-  # ===========================================================================
-  #  Pantalla del mando del Fire TV (se abre al tocar "Fire TV" / "Mando").
-  #  Teclas de la integración Android Debug Bridge; el volumen va por la Roku TV.
-  # ===========================================================================
-  - title: Mando
-    path: mando
-    icon: mdi:remote
-    theme: floorplan_dark
-    type: custom:grid-layout
-    layout:
-      grid-template-columns: minmax(280px, 460px)
-      justify-content: center
-      grid-gap: 12px
-      padding: 16px
-    cards:
-      - type: heading
-        heading: Fire TV · Mando
-        heading_style: title
-      - type: grid
-        columns: 3
-        square: false
-        cards:
-          - type: button
-            show_icon: false
-            show_name: false
-            tap_action:
-              action: none
-            card_mod:
-              style: |
-                ha-card { background: none; box-shadow: none; border: none; backdrop-filter: none; }
-          - type: button
-            icon: mdi:chevron-up
-            show_name: false
-            icon_height: 34px
-            tap_action:
-              action: perform-action
-              perform_action: remote.send_command
-              target:
-                entity_id: remote.living_room_fire_tv_living_room
-              data:
-                command: UP
-            card_mod: &boton_mando
-              style: |
-                ha-card {
-                  background: rgba(20, 24, 36, 0.55);
-                  backdrop-filter: blur(16px) saturate(140%);
-                  -webkit-backdrop-filter: blur(16px) saturate(140%);
-                  border: 1px solid rgba(255, 255, 255, 0.08);
-                  border-radius: 22px;
-                  height: 74px;
-                  display: flex; align-items: center; justify-content: center;
-                }
-          - type: button
-            show_icon: false
-            show_name: false
-            tap_action:
-              action: none
-            card_mod:
-              style: |
-                ha-card { background: none; box-shadow: none; border: none; backdrop-filter: none; }
-          - type: button
-            icon: mdi:chevron-left
-            show_name: false
-            icon_height: 34px
-            tap_action:
-              action: perform-action
-              perform_action: remote.send_command
-              target:
-                entity_id: remote.living_room_fire_tv_living_room
-              data:
-                command: LEFT
-            card_mod: *boton_mando
-          - type: button
-            icon: mdi:circle-medium
-            show_name: false
-            icon_height: 34px
-            tap_action:
-              action: perform-action
-              perform_action: remote.send_command
-              target:
-                entity_id: remote.living_room_fire_tv_living_room
-              data:
-                command: CENTER
-            card_mod: *boton_mando
-          - type: button
-            icon: mdi:chevron-right
-            show_name: false
-            icon_height: 34px
-            tap_action:
-              action: perform-action
-              perform_action: remote.send_command
-              target:
-                entity_id: remote.living_room_fire_tv_living_room
-              data:
-                command: RIGHT
-            card_mod: *boton_mando
-          - type: button
-            show_icon: false
-            show_name: false
-            tap_action:
-              action: none
-            card_mod:
-              style: |
-                ha-card { background: none; box-shadow: none; border: none; backdrop-filter: none; }
-          - type: button
-            icon: mdi:chevron-down
-            show_name: false
-            icon_height: 34px
-            tap_action:
-              action: perform-action
-              perform_action: remote.send_command
-              target:
-                entity_id: remote.living_room_fire_tv_living_room
-              data:
-                command: DOWN
-            card_mod: *boton_mando
-          - type: button
-            show_icon: false
-            show_name: false
-            tap_action:
-              action: none
-            card_mod:
-              style: |
-                ha-card { background: none; box-shadow: none; border: none; backdrop-filter: none; }
-
-      - type: grid
-        columns: 3
-        square: false
-        cards:
-          - type: button
-            icon: mdi:arrow-left
-            show_name: false
-            icon_height: 34px
-            tap_action:
-              action: perform-action
-              perform_action: remote.send_command
-              target:
-                entity_id: remote.living_room_fire_tv_living_room
-              data:
-                command: BACK
-            card_mod: *boton_mando
-          - type: button
-            icon: mdi:home
-            show_name: false
-            icon_height: 34px
-            tap_action:
-              action: perform-action
-              perform_action: remote.send_command
-              target:
-                entity_id: remote.living_room_fire_tv_living_room
-              data:
-                command: HOME
-            card_mod: *boton_mando
-          - type: button
-            icon: mdi:menu
-            show_name: false
-            icon_height: 34px
-            tap_action:
-              action: perform-action
-              perform_action: remote.send_command
-              target:
-                entity_id: remote.living_room_fire_tv_living_room
-              data:
-                command: MENU
-            card_mod: *boton_mando
-
-      - type: grid
-        columns: 3
-        square: false
-        cards:
-          - type: button
-            icon: mdi:rewind
-            show_name: false
-            icon_height: 34px
-            tap_action:
-              action: perform-action
-              perform_action: remote.send_command
-              target:
-                entity_id: remote.living_room_fire_tv_living_room
-              data:
-                command: REWIND
-            card_mod: *boton_mando
-          - type: button
-            icon: mdi:play-pause
-            show_name: false
-            icon_height: 34px
-            tap_action:
-              action: perform-action
-              perform_action: remote.send_command
-              target:
-                entity_id: remote.living_room_fire_tv_living_room
-              data:
-                command: "input keyevent 85"
-            card_mod: *boton_mando
-          - type: button
-            icon: mdi:fast-forward
-            show_name: false
-            icon_height: 34px
-            tap_action:
-              action: perform-action
-              perform_action: remote.send_command
-              target:
-                entity_id: remote.living_room_fire_tv_living_room
-              data:
-                command: FAST_FORWARD
-            card_mod: *boton_mando
-
-      - type: heading
-        heading: Volumen (tele Roku)
-        heading_style: subtitle
-      - type: grid
-        columns: 3
-        square: false
-        cards:
-          - type: button
-            icon: mdi:volume-minus
-            show_name: false
-            icon_height: 34px
-            tap_action:
-              action: perform-action
-              perform_action: remote.send_command
-              target:
-                entity_id: remote.living_room_75_philips_roku_tv
-              data:
-                command: volume_down
-            card_mod: *boton_mando
-          - type: button
-            icon: mdi:volume-mute
-            show_name: false
-            icon_height: 34px
-            tap_action:
-              action: perform-action
-              perform_action: remote.send_command
-              target:
-                entity_id: remote.living_room_75_philips_roku_tv
-              data:
-                command: volume_mute
-            card_mod: *boton_mando
-          - type: button
-            icon: mdi:volume-plus
-            show_name: false
-            icon_height: 34px
-            tap_action:
-              action: perform-action
-              perform_action: remote.send_command
-              target:
-                entity_id: remote.living_room_75_philips_roku_tv
-              data:
-                command: volume_up
-            card_mod: *boton_mando
-
-      - type: grid
-        columns: 2
-        square: false
-        cards:
-          - type: button
-            name: Apagar tele
-            icon: mdi:television-off
-            icon_height: 30px
-            tap_action:
-              action: perform-action
-              perform_action: script.turn_on
-              target:
-                entity_id: script.tele_apagar
-            card_mod: *boton_mando
-          - type: button
-            name: Volver
-            icon: mdi:arrow-left-circle
-            icon_height: 30px
-            tap_action:
-              action: navigate
-              navigation_path: /casa-3d/planta
-            card_mod: *boton_mando
