@@ -221,9 +221,10 @@ class Casa3DCard extends HTMLElement {
     }
     // marcadores propios: las luces reflejan su estado (encendida/apagada/no disponible)
     for (const { mk, m } of this._cmarkers ?? []) {
-      if (!mk.entity?.startsWith("light.")) continue;
+      const dom = mk.entity?.split(".")[0];
+      if (dom !== "light" && dom !== "media_player") continue;
       const st = hass.states[mk.entity];
-      m.setState(st?.state === "on");
+      m.setState(dom === "light" ? st?.state === "on" : !!st && !["off", "standby", "idle", "unavailable", "unknown"].includes(st.state));
       m.el.style.setProperty("opacity", !st || st.state === "unavailable" ? ".35" : "");
     }
     // puertas / ventanas con sensor

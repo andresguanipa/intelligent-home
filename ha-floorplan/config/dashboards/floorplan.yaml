@@ -120,6 +120,11 @@ views:
           - entity: vacuum.robotina
             icon: mdi:robot-vacuum
             at: [10.5, 1.6]         # pies; ajusta x (este) e y (sur) si hace falta
+          # Fire TV sobre la tele (3.er valor de "at" = altura en pies): tocar abre sus controles
+          - entity: media_player.living_room_fire_tv_living_room
+            name: Fire TV
+            icon: mdi:television-play
+            at: [0.6, 6.75, 3.6]
           # Botones de luz (virtuales: packages/luces_virtuales.yaml). Tocar = on/off,
           # mantener = más info. Cambia la entidad por la real cuando la tengas.
           - entity: light.sala_oeste
@@ -267,6 +272,39 @@ views:
               name: Spotify
               icon: mdi:spotify
               color: green
+              tap_action:
+                action: more-info
+              card_mod: *cristal
+          # Fire TV de la sala (integración Android Debug Bridge, por IP).
+          - type: conditional
+            conditions:
+              - condition: state
+                entity: media_player.living_room_fire_tv_living_room
+                state_not:
+                  - "off"
+                  - standby
+                  - idle
+                  - unavailable
+                  - unknown
+            card:
+              type: media-control
+              entity: media_player.living_room_fire_tv_living_room
+              card_mod: *cristal
+          - type: conditional
+            conditions:
+              - condition: state
+                entity: media_player.living_room_fire_tv_living_room
+                state:
+                  - "off"
+                  - standby
+                  - idle
+                  - unavailable
+                  - unknown
+            card:
+              type: tile
+              entity: media_player.living_room_fire_tv_living_room
+              name: Fire TV
+              icon: mdi:television
               tap_action:
                 action: more-info
               card_mod: *cristal
