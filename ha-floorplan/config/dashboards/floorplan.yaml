@@ -120,16 +120,12 @@ views:
           - entity: vacuum.robotina
             icon: mdi:robot-vacuum
             at: [10.5, 1.6]         # pies; ajusta x (este) e y (sur) si hace falta
-          # Fire TV sobre la tele (3.er valor de "at" = altura en pies): tocar abre sus controles
-          - entity: media_player.living_room_fire_tv_living_room
-            name: Fire TV
-            icon: mdi:television-play
-            at: [0.6, 7.6, 3.6]
-          # Tele Roku (apagado real, volumen y entradas): junto al icono del Fire TV
+          # Tele (Roku TV: apagado real, volumen y entradas), centrada sobre el panel.
+          # El 3.er valor de "at" es la altura en pies. El Fire TV se maneja desde Multimedia.
           - entity: media_player.living_room_75_philips_roku_tv
-            name: Tele Roku
+            name: Tele
             icon: mdi:television
-            at: [0.6, 5.9, 3.6]
+            at: [0.6, 6.75, 3.6]
           # Botones de luz (virtuales: packages/luces_virtuales.yaml). Tocar = on/off,
           # mantener = más info. Cambia la entidad por la real cuando la tengas.
           - entity: light.sala_oeste
