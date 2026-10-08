@@ -372,7 +372,7 @@ views:
                   data:
                     command: HOME
                 card_mod: *cristal
-          # Tele Roku TV y botones de encendido/apagado completos.
+          # Botones de encendido/apagado completos de la tele (Roku TV + Fire TV).
           - type: grid
             columns: 2
             square: false
@@ -399,10 +399,3 @@ views:
                   target:
                     entity_id: script.tele_encender
                 card_mod: *cristal
-          - type: tile
-            entity: media_player.living_room_75_philips_roku_tv
-            name: Tele (Roku)
-            icon: mdi:television-classic
-            tap_action:
-              action: more-info
-            card_mod: *cristal
