@@ -7,7 +7,7 @@
 //    sala: light.sala              #   id de habitación → entidad
 //  openings:                       # opcional: puertas/ventanas con sensor
 //    puerta_dorm2: binary_sensor.puerta_dormitorio   # on = abierta, off = cerrada
-//  markers:                        # opcional: iconos extra sobre el plano
+//  markers:                        # opcional: iconos extra sobre el plano (light.* = botón on/off)
 //    - entity: camera.timbre_puerta
 //      icon: mdi:doorbell-video
 //      at: [3.5, 21]               #   pies, mismas coordenadas que house.json
@@ -162,12 +162,16 @@ class Casa3DCard extends HTMLElement {
         });
         this._markers.set(ent, m);
       }
+      this._cmarkers = [];
       for (const mk of cfg.markers) {
-        h.addMarker({
-          at: mk.at, room: mk.room, icon: mk.icon ?? "mdi:circle", emoji: "●", title: mk.entity,
-          onTap: () => (mk.tap_action === "toggle" ? this._toggle(mk.entity) : this._moreInfo(mk.entity)),
+        // las luces se encienden/apagan al tocar por defecto; mantener = más info
+        const toggle = (mk.tap_action ?? (mk.entity?.startsWith("light.") ? "toggle" : "more-info")) === "toggle";
+        const m = h.addMarker({
+          at: mk.at, room: mk.room, icon: mk.icon ?? "mdi:circle", emoji: "●", title: mk.name ?? mk.entity,
+          onTap: () => (toggle ? this._toggle(mk.entity) : this._moreInfo(mk.entity)),
           onHold: () => this._moreInfo(mk.entity),
         });
+        this._cmarkers.push({ mk, m });
       }
       this._states = {};
       this._sync();
@@ -214,6 +218,13 @@ class Casa3DCard extends HTMLElement {
         color: rgb ? `rgb(${rgb.join(",")})` : undefined,
       });
       this._markers?.get(ent)?.el.style.setProperty("opacity", st?.state === "unavailable" ? ".35" : "");
+    }
+    // marcadores propios: las luces reflejan su estado (encendida/apagada/no disponible)
+    for (const { mk, m } of this._cmarkers ?? []) {
+      if (!mk.entity?.startsWith("light.")) continue;
+      const st = hass.states[mk.entity];
+      m.setState(st?.state === "on");
+      m.el.style.setProperty("opacity", !st || st.state === "unavailable" ? ".35" : "");
     }
     // puertas / ventanas con sensor
     for (const [id, ent] of Object.entries(this._config.openings)) {

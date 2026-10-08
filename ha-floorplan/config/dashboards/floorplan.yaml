@@ -120,6 +120,36 @@ views:
           - entity: vacuum.robotina
             icon: mdi:robot-vacuum
             at: [10.5, 1.6]         # pies; ajusta x (este) e y (sur) si hace falta
+          # Botones de luz (virtuales: packages/luces_virtuales.yaml). Tocar = on/off,
+          # mantener = más info. Cambia la entidad por la real cuando la tengas.
+          - entity: light.sala_oeste
+            name: Sala oeste
+            icon: mdi:lightbulb
+            at: [5.05, 6.7]
+          - entity: light.sala_sur
+            name: Sala sur
+            icon: mdi:lightbulb
+            at: [12.1, 20.6]
+          - entity: light.pasillo_centro
+            name: Pasillo centro
+            icon: mdi:lightbulb
+            at: [27.8, 14.9]
+          - entity: light.pasillo_este
+            name: Pasillo este
+            icon: mdi:lightbulb
+            at: [38.3, 15.1]
+          - entity: light.fau
+            name: FAU
+            icon: mdi:lightbulb
+            at: [27.6, 19.8]
+          - entity: light.wc_suite
+            name: WC suite
+            icon: mdi:lightbulb
+            at: [34.4, 19.9]
+          - entity: light.bano_suite
+            name: Baño suite
+            icon: mdi:lightbulb
+            at: [40.3, 19.9]
         # Cámara del timbre superpuesta (modo "overlay" de automations/timbre.yaml):
         # visible mientras input_boolean.timbre_overlay = on; tocar la cierra.
         doorbell:

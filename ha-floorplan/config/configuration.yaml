@@ -29,7 +29,7 @@ frontend:
     - /local/vendor/layout-card.js
     - /local/vendor/kiosk-mode.js
     # Tarjeta del modelo 3D (three.js viene de scripts/bootstrap.sh → www/vendor/three/)
-    - /local/casa3d/casa3d-card.js?v=3
+    - /local/casa3d/casa3d-card.js?v=4
 
 # -----------------------------------------------------------------------------
 #  Dashboards en modo YAML
