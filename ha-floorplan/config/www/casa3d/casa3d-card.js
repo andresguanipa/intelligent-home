@@ -14,14 +14,16 @@
 //  doorbell:                       # opcional: vídeo superpuesto cuando overlay = on
 //    overlay: input_boolean.timbre_overlay
 //    camera: camera.timbre_puerta
-//  interactive: false              # true = orbitar/zoom con el dedo
+//  interactive: false              # true = orbitar/zoom con el dedo (expandido siempre se puede)
+//  Tocar el plano lo expande a pantalla completa (botón ⤢/✕ o Esc para cerrar).
+//  Expandido, tocar una habitación enciende/apaga su luz; los iconos lo hacen siempre.
 //  cutaway: true                   # false = muros completos
 //  aspect_ratio: "16/10"
 //  house: /local/casa3d/house.json # opcional
 //
 //  Toque en una habitación o en su icono: enciende/apaga. Mantener el icono: más info.
 // =============================================================================
-import { createHouse3D } from "./house3d.js";
+import { createHouse3D } from "./house3d.js?v=3";   // ?v= salta la caché de /local/ (31 días)
 
 class Casa3DCard extends HTMLElement {
   constructor() {
@@ -39,6 +41,14 @@ class Casa3DCard extends HTMLElement {
         :host { display:block; }
         ha-card { overflow:hidden; background:rgba(8,10,16,.65); }
         #stage { position:relative; width:100%; aspect-ratio:${this._config.aspect_ratio}; }
+        #fs { position:absolute; top:10px; right:10px; z-index:6; width:36px; height:36px; border-radius:50%;
+              border:1px solid rgba(255,255,255,.18); background:rgba(10,12,18,.55); color:#dfe4f0;
+              font:18px/1 system-ui; cursor:pointer; backdrop-filter:blur(6px); }
+        #fs:hover { background:rgba(40,46,64,.75); }
+        :host(.exp) ha-card { height:100%; border-radius:0 !important; border:0 !important; box-shadow:none !important; }
+        :host(.exp) #stage { aspect-ratio:auto; height:100%; }
+        :host(:fullscreen) { width:100vw; height:100vh; background:#0a0d14; }
+        :host(.fx) { position:fixed; inset:0; z-index:99999; display:block; background:#0a0d14; }
         #msg { position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
                color:#9aa3b8; font:14px system-ui; text-align:center; padding:16px; }
         #overlay { position:absolute; inset:0; display:none; align-items:center; justify-content:center;
@@ -51,10 +61,19 @@ class Casa3DCard extends HTMLElement {
       </style>
       <ha-card>
         <div id="stage"><div id="msg">Cargando modelo 3D…</div>
+          <button id="fs" title="Pantalla completa" aria-label="Pantalla completa">⤢</button>
           <div id="overlay"><div class="title">🔔 Llaman a la puerta</div><div class="box"></div></div>
         </div>
       </ha-card>`;
     this._stage = this.shadowRoot.getElementById("stage");
+    // Tocar el plano (sin arrastrar) lo expande; los iconos paran el clic.
+    let down = null;
+    this._stage.addEventListener("pointerdown", (e) => { down = [e.clientX, e.clientY]; });
+    this._stage.addEventListener("click", (e) => {
+      if (this._expanded || !down || Math.hypot(e.clientX - down[0], e.clientY - down[1]) > 6) return;
+      this._toggleExpand(true);
+    });
+    this.shadowRoot.getElementById("fs").addEventListener("click", (e) => { e.stopPropagation(); this._toggleExpand(); });
     this._house?.dispose();
     this._house = null;
     this._init();
@@ -69,8 +88,50 @@ class Casa3DCard extends HTMLElement {
   getGridOptions() { return { columns: 12, rows: 6 }; }
   static getStubConfig() { return { type: "custom:casa3d-card" }; }
 
-  connectedCallback() { if (this._config && !this._house && !this._initializing) this._init(); }
+  connectedCallback() {
+    this.addEventListener("fullscreenchange", this._onFs);
+    this.addEventListener("webkitfullscreenchange", this._onFs);
+    if (this._config && !this._house && !this._initializing) this._init();
+  }
+  _onFs = () => {
+    const fs = this.matches(":fullscreen") || this.matches(":-webkit-full-screen");
+    if (fs) this._setExpanded(true);
+    else if (this._expanded && !this._fx) this._setExpanded(false);
+  };
+
+  _toggleExpand(force) {
+    const want = force ?? !this._expanded;
+    if (want === this._expanded) return;
+    if (want) {
+      const req = this.requestFullscreen ?? this.webkitRequestFullscreen;
+      const fallback = () => { if (!this._expanded) this._setExpanded(true, true); };
+      if (!req) return fallback();
+      try { Promise.resolve(req.call(this)).catch(fallback); } catch { fallback(); }
+      // algunos navegadores (WebView, paneles integrados) no responden ni rechazan
+      setTimeout(() => { if (!this._expanded && !this.matches(":fullscreen")) fallback(); }, 500);
+    } else if (this._fx) {
+      this._setExpanded(false);
+    } else {
+      (document.exitFullscreen ?? document.webkitExitFullscreen)?.call(document);
+    }
+  }
+
+  _setExpanded(on, fallback = false) {
+    this._expanded = on;
+    this._fx = on && fallback;
+    this.classList.toggle("exp", on);
+    this.classList.toggle("fx", this._fx);
+    const b = this.shadowRoot.getElementById("fs");
+    b.textContent = on ? "✕" : "⤢";
+    b.title = on ? "Cerrar" : "Pantalla completa";
+    this._house?.setInteractive?.(on || this._config.interactive);
+    requestAnimationFrame(() => this._house?.resize?.());
+  }
+
   disconnectedCallback() {
+    this.removeEventListener("fullscreenchange", this._onFs);
+    this.removeEventListener("webkitfullscreenchange", this._onFs);
+    if (this._expanded) this._setExpanded(false);
     this._house?.dispose();
     this._house = null;
   }
@@ -87,7 +148,8 @@ class Casa3DCard extends HTMLElement {
         interactive: cfg.interactive,
         cutaway: cfg.cutaway,
         background: "transparent",
-        onRoomTap: (id) => this._toggle(this._lightEntity(id)),
+        // contraído, tocar el plano lo expande (ver setConfig); expandido, enciende la luz
+        onRoomTap: (id) => { if (this._expanded) this._toggle(this._lightEntity(id)); },
       });
       this._house = h;
       // un icono por habitación con luz
