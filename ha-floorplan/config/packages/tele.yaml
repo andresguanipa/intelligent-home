@@ -30,7 +30,11 @@ script:
         continue_on_error: true
 
   # Abre una app del Fire TV por nombre. Si el Fire TV está en reposo ("off"), lo despierta
-  # primero y espera hasta 15 s: con la pantalla dormida, select_source no hace nada.
+  # primero y espera hasta 15 s. La app se lanza con "am start" porque media_player.select_source
+  # no funciona en este Fire TV (Android 11): su comando usa "dumpsys window windows", que aquí
+  # no devuelve nada, y la cadena se corta antes de abrir la app.
+  # Para añadir una app: sus componentes salen de
+  #   cmd package resolve-activity --brief -c android.intent.category.LEANBACK_LAUNCHER <paquete>
   fire_abrir_app:
     alias: "Fire TV · Abrir app"
     icon: mdi:television-play
@@ -38,9 +42,14 @@ script:
     fields:
       app:
         name: App
-        description: Nombre de la app, tal como está en Android Debug Bridge > Aplicaciones
+        description: Nombre de la app (YouTube, Disney+ o Spotify)
         example: YouTube
         required: true
+    variables:
+      componentes:
+        "YouTube": com.amazon.firetv.youtube/dev.cobalt.app.MainActivity
+        "Disney+": com.disney.disneyplus/com.bamtechmedia.dominguez.main.MainActivity
+        "Spotify": com.spotify.tv.android/.SpotifyTVActivity
     sequence:
       - if:
           - condition: state
@@ -53,7 +62,15 @@ script:
             timeout: "00:00:15"
             continue_on_timeout: true
           - delay: "00:00:02"
-      - action: media_player.select_source
-        target: {entity_id: media_player.living_room_fire_tv_living_room}
-        data:
-          source: "{{ app }}"
+      - choose:
+          - conditions: "{{ app in componentes }}"
+            sequence:
+              - action: androidtv.adb_command
+                target: {entity_id: media_player.living_room_fire_tv_living_room}
+                data:
+                  command: "am start -n {{ componentes[app] }}"
+        default:
+          - action: media_player.select_source
+            target: {entity_id: media_player.living_room_fire_tv_living_room}
+            data:
+              source: "{{ app }}"
