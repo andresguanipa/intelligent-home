@@ -327,11 +327,9 @@ views:
                 hide_state: true
                 tap_action:
                   action: perform-action
-                  perform_action: media_player.select_source
-                  target:
-                    entity_id: media_player.living_room_fire_tv_living_room
+                  perform_action: script.fire_abrir_app
                   data:
-                    source: YouTube
+                    app: YouTube
                 card_mod: *cristal
               - type: tile
                 entity: media_player.living_room_fire_tv_living_room
@@ -340,11 +338,9 @@ views:
                 hide_state: true
                 tap_action:
                   action: perform-action
-                  perform_action: media_player.select_source
-                  target:
-                    entity_id: media_player.living_room_fire_tv_living_room
+                  perform_action: script.fire_abrir_app
                   data:
-                    source: Disney+
+                    app: Disney+
                 card_mod: *cristal
               - type: tile
                 entity: media_player.living_room_fire_tv_living_room
@@ -353,11 +349,9 @@ views:
                 hide_state: true
                 tap_action:
                   action: perform-action
-                  perform_action: media_player.select_source
-                  target:
-                    entity_id: media_player.living_room_fire_tv_living_room
+                  perform_action: script.fire_abrir_app
                   data:
-                    source: Spotify
+                    app: Spotify
                 card_mod: *cristal
               - type: tile
                 entity: remote.living_room_fire_tv_living_room

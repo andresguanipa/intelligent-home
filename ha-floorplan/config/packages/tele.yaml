@@ -28,3 +28,32 @@ script:
       - action: media_player.turn_on
         target: {entity_id: media_player.living_room_fire_tv_living_room}
         continue_on_error: true
+
+  # Abre una app del Fire TV por nombre. Si el Fire TV está en reposo ("off"), lo despierta
+  # primero y espera hasta 15 s: con la pantalla dormida, select_source no hace nada.
+  fire_abrir_app:
+    alias: "Fire TV · Abrir app"
+    icon: mdi:television-play
+    mode: restart
+    fields:
+      app:
+        name: App
+        description: Nombre de la app, tal como está en Android Debug Bridge > Aplicaciones
+        example: YouTube
+        required: true
+    sequence:
+      - if:
+          - condition: state
+            entity_id: media_player.living_room_fire_tv_living_room
+            state: ["off", "standby", "unavailable"]
+        then:
+          - action: media_player.turn_on
+            target: {entity_id: media_player.living_room_fire_tv_living_room}
+          - wait_template: "{{ states('media_player.living_room_fire_tv_living_room') not in ['off', 'standby', 'unavailable', 'unknown'] }}"
+            timeout: "00:00:15"
+            continue_on_timeout: true
+          - delay: "00:00:02"
+      - action: media_player.select_source
+        target: {entity_id: media_player.living_room_fire_tv_living_room}
+        data:
+          source: "{{ app }}"
