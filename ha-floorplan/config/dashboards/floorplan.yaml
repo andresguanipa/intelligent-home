@@ -124,7 +124,12 @@ views:
           - entity: media_player.living_room_fire_tv_living_room
             name: Fire TV
             icon: mdi:television-play
-            at: [0.6, 6.75, 3.6]
+            at: [0.6, 7.6, 3.6]
+          # Tele Roku (apagado real, volumen y entradas): junto al icono del Fire TV
+          - entity: media_player.living_room_75_philips_roku_tv
+            name: Tele Roku
+            icon: mdi:television
+            at: [0.6, 5.9, 3.6]
           # Botones de luz (virtuales: packages/luces_virtuales.yaml). Tocar = on/off,
           # mantener = más info. Cambia la entidad por la real cuando la tengas.
           - entity: light.sala_oeste
@@ -367,3 +372,37 @@ views:
                   data:
                     command: HOME
                 card_mod: *cristal
+          # Tele Roku TV y botones de encendido/apagado completos.
+          - type: grid
+            columns: 2
+            square: false
+            cards:
+              - type: tile
+                entity: script.tele_apagar
+                name: Apagar tele
+                icon: mdi:television-off
+                hide_state: true
+                tap_action:
+                  action: perform-action
+                  perform_action: script.turn_on
+                  target:
+                    entity_id: script.tele_apagar
+                card_mod: *cristal
+              - type: tile
+                entity: script.tele_encender
+                name: Encender tele
+                icon: mdi:television
+                hide_state: true
+                tap_action:
+                  action: perform-action
+                  perform_action: script.turn_on
+                  target:
+                    entity_id: script.tele_encender
+                card_mod: *cristal
+          - type: tile
+            entity: media_player.living_room_75_philips_roku_tv
+            name: Tele (Roku)
+            icon: mdi:television-classic
+            tap_action:
+              action: more-info
+            card_mod: *cristal

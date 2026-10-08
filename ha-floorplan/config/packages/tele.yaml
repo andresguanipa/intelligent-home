@@ -1,0 +1,30 @@
+# =============================================================================
+#  packages/tele.yaml · apagar/encender la tele de la sala (Philips Roku TV + Fire TV)
+# -----------------------------------------------------------------------------
+#  El Fire TV solo entra en reposo al "apagarlo". Para apagar la pantalla de verdad se
+#  usa la integración de Roku (la tele es una Roku TV). Encender por red necesita
+#  "Inicio rápido de la TV" activado en la tele (Ajustes > Sistema > Energía).
+#  Entidades: integraciones Roku y Android Debug Bridge (Ajustes > Dispositivos).
+# =============================================================================
+
+script:
+  tele_apagar:
+    alias: "Tele · Apagar (Roku TV + Fire TV)"
+    icon: mdi:television-off
+    sequence:
+      - action: media_player.turn_off
+        target: {entity_id: media_player.living_room_fire_tv_living_room}
+        continue_on_error: true
+      - action: media_player.turn_off
+        target: {entity_id: media_player.living_room_75_philips_roku_tv}
+
+  tele_encender:
+    alias: "Tele · Encender (Roku TV + Fire TV)"
+    icon: mdi:television
+    sequence:
+      - action: media_player.turn_on
+        target: {entity_id: media_player.living_room_75_philips_roku_tv}
+      - delay: "00:00:08"
+      - action: media_player.turn_on
+        target: {entity_id: media_player.living_room_fire_tv_living_room}
+        continue_on_error: true
