@@ -308,3 +308,62 @@ views:
               tap_action:
                 action: more-info
               card_mod: *cristal
+          # Botones de apps del Fire TV. El botón "Source" de HA solo lista las apps que
+          # están en ejecución, así que se lanzan por nombre (los de Ajustes > Android Debug
+          # Bridge > Configurar > Aplicaciones). Añade más copiando un bloque.
+          - type: grid
+            columns: 2
+            square: false
+            cards:
+              - type: tile
+                entity: media_player.living_room_fire_tv_living_room
+                name: YouTube
+                icon: mdi:youtube
+                hide_state: true
+                tap_action:
+                  action: perform-action
+                  perform_action: media_player.select_source
+                  target:
+                    entity_id: media_player.living_room_fire_tv_living_room
+                  data:
+                    source: YouTube
+                card_mod: *cristal
+              - type: tile
+                entity: media_player.living_room_fire_tv_living_room
+                name: Disney+
+                icon: mdi:movie-open-play
+                hide_state: true
+                tap_action:
+                  action: perform-action
+                  perform_action: media_player.select_source
+                  target:
+                    entity_id: media_player.living_room_fire_tv_living_room
+                  data:
+                    source: Disney+
+                card_mod: *cristal
+              - type: tile
+                entity: media_player.living_room_fire_tv_living_room
+                name: Spotify
+                icon: mdi:spotify
+                hide_state: true
+                tap_action:
+                  action: perform-action
+                  perform_action: media_player.select_source
+                  target:
+                    entity_id: media_player.living_room_fire_tv_living_room
+                  data:
+                    source: Spotify
+                card_mod: *cristal
+              - type: tile
+                entity: remote.living_room_fire_tv_living_room
+                name: Inicio
+                icon: mdi:home
+                hide_state: true
+                tap_action:
+                  action: perform-action
+                  perform_action: remote.send_command
+                  target:
+                    entity_id: remote.living_room_fire_tv_living_room
+                  data:
+                    command: HOME
+                card_mod: *cristal
